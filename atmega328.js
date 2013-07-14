@@ -106,7 +106,52 @@ var atmega328 = {
 		this.reg[_Rd] = Rd; 
 	},
 
-	
+
+
+	/**
+	 * Clears the Carry Flag (C) in SREG (Status Register).
+	 */
+	'clc': funcion() {
+
+		/* Carry Flag cleared */
+		this.sreg['C'] = false;	
+
+		/* Program counter */
+		this.PC++;
+	},
+
+
+
+	/**
+	 * Clears the Half Carry Flag (H) in SREG (Status Register). 
+	 */
+	'clh': funcion() {
+		
+		/* Half Carry Flag cleared */
+		this.sreg['H'] = false;	
+
+		/* Program counter */
+		this.PC++;
+	},
+
+
+
+	/**
+	 * Clears the Global Interrupt Flag (I) in SREG (Status Register). 
+	 * The interrupts will be immediately disabled. 
+	 * No interrupt will be executed after the CLI instruction, 
+	 * even if it occurs simultaneously with the CLI instruction.
+	 */
+	'cli': funcion() {
+		
+		/* Global Interrupt Flag cleared */
+		this.sreg['I'] = false;	
+
+		/* Program counter */
+		this.PC++;
+	},
+
+
 
 	/**
 	 * Performs the logical EOR between the contents of register Rd and register Rr
@@ -120,7 +165,7 @@ var atmega328 = {
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
 
-		/* Operation: Rd <- Rd || Rr */
+		/* Operation: Rd <- Rd != Rr */
 		Rd[0] = Rd[0] != Rr[0];
 		Rd[1] = Rd[1] != Rr[1];
 		Rd[2] = Rd[2] != Rr[2];
