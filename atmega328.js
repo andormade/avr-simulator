@@ -154,6 +154,45 @@ var atmega328 = {
 
 
 	/**
+	 * Clears the Negative Flag (N) in SREG (Status Register).
+	 */
+	'cln': funcion() {
+		
+		/* Negative Flag cleared */
+		this.sreg['N'] = false;	
+
+		/* Program counter */
+		this.PC++;
+	},
+
+	/**
+	 * Clears a register. 
+	 * This instruction performs an Exclusive OR between a register and itself. 
+	 * This will clear all bits in the register.
+	 *
+	 * @param _Rd    Destination register
+	 */
+	'clr': function(_Rd) {
+
+		var Rd = this.reg[_Rd];
+
+		Rd[0] = Rd[0] != Rd[0];
+		Rd[1] = Rd[1] != Rd[1];
+		Rd[2] = Rd[2] != Rd[2];
+		Rd[3] = Rd[3] != Rd[3];
+		Rd[4] = Rd[4] != Rd[4];
+		Rd[5] = Rd[5] != Rd[5];
+		Rd[6] = Rd[6] != Rd[6];
+		Rd[7] = Rd[7] != Rd[7];
+
+		this.sreg['S'] = false;
+		this.sreg['V'] = false;
+		this.sreg['N'] = false;
+		this.sreg['Z'] = true;
+
+	}
+
+	/**
 	 * Performs the logical EOR between the contents of register Rd and register Rr
 	 * and places the result in the destination register Rd.
 	 *
