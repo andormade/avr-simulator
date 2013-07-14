@@ -62,4 +62,45 @@ var atmega328 = {
 	},
 			
 	memory: []
+
+	/**
+	 * Performs the logical AND between the contents of register Rd and register Rr 
+	 * and places the result in the destination register Rd.
+	 *
+	 * @param _Rd    Destination register
+	 * @param _Rr
+	 */
+	'and': function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+
+		/* Operation: Rd <- Rd && Rr */
+		Rd[0] = Rd[0] && Rr[0];
+		Rd[1] = Rd[1] && Rr[1];
+		Rd[2] = Rd[2] && Rr[2];
+		Rd[3] = Rd[3] && Rr[3];
+		Rd[4] = Rd[4] && Rr[4];
+		Rd[5] = Rd[5] && Rd[5];
+		Rd[6] = Rd[6] && Rd[6];
+		Rd[7] = Rd[7] && Rd[7]; 
+
+		/* @TODO */
+		this.sreg['S'];
+
+		/* Cleared */
+		this.sreg['V'] = false;
+
+		/* Set if MSB of the result is set; cleared otherwise. */
+		this.sreg['N'] = Rd[7];
+ 
+		/* Set if the result is $00; cleared otherwise. */
+		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
+		/* Program counter */
+		this.PC++;
+		
+
+		this.reg[_Rd] = Rd; 
+	}
 };
