@@ -61,7 +61,9 @@ var atmega328 = {
 		'r31': [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false]
 	},
 			
-	memory: []
+	memory: [],
+
+
 
 	/**
 	 * Performs the logical AND between the contents of register Rd and register Rr 
@@ -99,8 +101,104 @@ var atmega328 = {
 
 		/* Program counter */
 		this.PC++;
-		
+
 
 		this.reg[_Rd] = Rd; 
-	}
+	},
+
+	
+
+	/**
+	 * Performs the logical EOR between the contents of register Rd and register Rr
+	 * and places the result in the destination register Rd.
+	 *
+	 * @param _Rd
+	 * @param _Rr
+	 */
+	 'eor': function() {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+
+		/* Operation: Rd <- Rd || Rr */
+		Rd[0] = Rd[0] != Rr[0];
+		Rd[1] = Rd[1] != Rr[1];
+		Rd[2] = Rd[2] != Rr[2];
+		Rd[3] = Rd[3] != Rr[3];
+		Rd[4] = Rd[4] != Rr[4];
+		Rd[5] = Rd[5] != Rd[5];
+		Rd[6] = Rd[6] != Rd[6];
+		Rd[7] = Rd[7] != Rd[7]; 
+
+		/* @TODO */
+		this.sreg['S'];
+
+		/* Cleared */
+		this.sreg['V'] = false;
+
+		/* Set if MSB of the result is set; cleared otherwise. */
+		this.sreg['N'] = Rd[7];
+ 
+		/* Set if the result is $00; cleared otherwise. */
+		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
+		/* Program counter */
+		this.PC++;
+
+
+		this.reg[_Rd] = Rd; 
+	 },
+
+
+
+	/**
+	 * This instruction performs a single cycle No Operation.
+	 */
+	'nop': function() {
+
+		this.PC++;
+	},
+
+
+
+	/**
+	 * Performs the logical OR between the contents of register Rd and register Rr 
+	 * and places the result in the destination register Rd.
+	 *
+	 * @param _Rd
+	 * @param _Rr
+	 */
+	 'or': function() {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+
+		/* Operation: Rd <- Rd || Rr */
+		Rd[0] = Rd[0] || Rr[0];
+		Rd[1] = Rd[1] || Rr[1];
+		Rd[2] = Rd[2] || Rr[2];
+		Rd[3] = Rd[3] || Rr[3];
+		Rd[4] = Rd[4] || Rr[4];
+		Rd[5] = Rd[5] || Rd[5];
+		Rd[6] = Rd[6] || Rd[6];
+		Rd[7] = Rd[7] || Rd[7]; 
+
+		/* @TODO */
+		this.sreg['S'];
+
+		/* Cleared */
+		this.sreg['V'] = false;
+
+		/* Set if MSB of the result is set; cleared otherwise. */
+		this.sreg['N'] = Rd[7];
+ 
+		/* Set if the result is $00; cleared otherwise. */
+		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
+		/* Program counter */
+		this.PC++;
+
+
+		this.reg[_Rd] = Rd; 
+	 }
 };
