@@ -165,6 +165,8 @@ var atmega328 = {
 		this.PC++;
 	},
 
+
+
 	/**
 	 * Clears a register. 
 	 * This instruction performs an Exclusive OR between a register and itself. 
@@ -176,6 +178,7 @@ var atmega328 = {
 
 		var Rd = this.reg[_Rd];
 
+		/* Operation: Rd <- Rd != Rd */
 		Rd[0] = Rd[0] != Rd[0];
 		Rd[1] = Rd[1] != Rd[1];
 		Rd[2] = Rd[2] != Rd[2];
@@ -190,7 +193,14 @@ var atmega328 = {
 		this.sreg['N'] = false;
 		this.sreg['Z'] = true;
 
+		/* Program counter */
+		this.PC++;
+
+
+		this.reg[_Rd] = Rd;
 	}
+
+
 
 	/**
 	 * Performs the logical EOR between the contents of register Rd and register Rr
@@ -240,6 +250,7 @@ var atmega328 = {
 	 */
 	'nop': function() {
 
+		/* Incrementing program cointer */
 		this.PC++;
 	},
 
