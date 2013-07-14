@@ -83,9 +83,9 @@ var atmega328 = {
 		Rd[2] = Rd[2] && Rr[2];
 		Rd[3] = Rd[3] && Rr[3];
 		Rd[4] = Rd[4] && Rr[4];
-		Rd[5] = Rd[5] && Rd[5];
-		Rd[6] = Rd[6] && Rd[6];
-		Rd[7] = Rd[7] && Rd[7]; 
+		Rd[5] = Rd[5] && Rr[5];
+		Rd[6] = Rd[6] && Rr[6];
+		Rd[7] = Rd[7] && Rr[7]; 
 
 		/* @TODO */
 		this.sreg['S'];
@@ -243,7 +243,7 @@ var atmega328 = {
 
 
 	/**
-	 *Clears the Zero Flag (Z) in SREG (Status Register). 
+	 * Clears the Zero Flag (Z) in SREG (Status Register). 
 	 */
 	'clz': function() {
 
@@ -251,7 +251,8 @@ var atmega328 = {
 		this.sreg['Z'] = false;
 
 		this.PC++;
-	}
+	},
+
 
 
 	/**
@@ -261,7 +262,7 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param _Rr
 	 */
-	 'eor': function() {
+	'eor': function() {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
@@ -272,9 +273,9 @@ var atmega328 = {
 		Rd[2] = Rd[2] != Rr[2];
 		Rd[3] = Rd[3] != Rr[3];
 		Rd[4] = Rd[4] != Rr[4];
-		Rd[5] = Rd[5] != Rd[5];
-		Rd[6] = Rd[6] != Rd[6];
-		Rd[7] = Rd[7] != Rd[7]; 
+		Rd[5] = Rd[5] != Rr[5];
+		Rd[6] = Rd[6] != Rr[6];
+		Rd[7] = Rd[7] != Rr[7]; 
 
 		/* @TODO */
 		this.sreg['S'];
@@ -293,7 +294,38 @@ var atmega328 = {
 
 
 		this.reg[_Rd] = Rd; 
-	 },
+	},
+
+
+
+	/**
+	 * This instruction makes a copy of one register into another. 
+	 * The source register Rr is left unchanged, 
+	 * while the destination register Rd is loaded with a copy of Rr.
+	 *
+	 * @param _Rd
+	 * @param _Rr
+	 */
+	'mov': function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+
+		/* Operation: Rd <- Rr */
+		Rd[0] = Rr[0];
+		Rd[1] = Rr[1];
+		Rd[2] = Rr[2];
+		Rd[3] = Rr[3];
+		Rd[4] = Rr[4];
+		Rd[5] = Rr[5];
+		Rd[6] = Rr[6];
+		Rd[7] = Rr[7];
+
+		this.PC++;
+
+
+		this.reg[_Rd] = Rd;
+	},
 
 
 
@@ -326,9 +358,9 @@ var atmega328 = {
 		Rd[2] = Rd[2] || Rr[2];
 		Rd[3] = Rd[3] || Rr[3];
 		Rd[4] = Rd[4] || Rr[4];
-		Rd[5] = Rd[5] || Rd[5];
-		Rd[6] = Rd[6] || Rd[6];
-		Rd[7] = Rd[7] || Rd[7]; 
+		Rd[5] = Rd[5] || Rr[5];
+		Rd[6] = Rd[6] || Rr[6];
+		Rd[7] = Rd[7] || Rr[7]; 
 
 		/* @TODO */
 		this.sreg['S'];
