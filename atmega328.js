@@ -198,8 +198,60 @@ var atmega328 = {
 
 
 		this.reg[_Rd] = Rd;
-	}
+	},
 
+
+
+	/**
+	 * Clears the Signed Flag (S) in SREG (Status Register). 
+	 */
+	'cls': function() {
+
+		/* Signed Flag cleared */
+		this.sreg['S'] = false;
+
+		/* Program counter */
+		this.PC++;
+	},
+
+
+
+	/**
+	 * Clears the T Flag in SREG (Status Register).
+	 */
+	'clt': function() {
+
+		/* T Flag cleared */
+		this.sreg['T'] = false;
+
+		this.PC++;
+	},
+
+
+
+	/**
+	 * Clears the Overflow Flag (V) in SREG (Status Register).
+	 */
+	'clv': function() {
+
+		/* Overflow Flag cleared */
+		this.sreg['V'] = false;
+
+		this.PC++;
+	},
+
+
+
+	/**
+	 *Clears the Zero Flag (Z) in SREG (Status Register). 
+	 */
+	'clz': function() {
+
+		/* Zero Flag cleared */
+		this.sreg['Z'] = false;
+
+		this.PC++;
+	}
 
 
 	/**
