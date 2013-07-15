@@ -161,6 +161,45 @@ var atmega328 = {
 
 		this.reg[_Rd] = Rd;
 	},
+	
+	
+	
+	/** 
+	 * Bit clear in SREG
+	 */
+	'bclr': function(s) {
+		
+		/* @TODO */
+		
+		switch(s) {
+			case 7:
+				this.sreg['I'] = false;
+				break;
+			case 6:
+				this.sreg['T'] = false;
+				break;
+			case 5:
+				this.sreg['H'] = false;
+				break;
+			case 4:
+				this.sreg['S'] = false;
+				break;
+			case 3:
+				this.sreg['V'] = false;
+				break;
+			case 2:
+				this.sreg['N'] = false;
+				break;
+			case 1:
+				this.sreg['Z'] = false;
+				break;
+			case 0:
+				this.sreg['C'] = false;
+				break;
+		}
+		
+		this.PC++;
+	},
 
 
 
@@ -439,7 +478,7 @@ var atmega328 = {
 		this.PC++;
 		
 		this.reg[_Rd] = Rd;
-	}
+	},
 
 
 
