@@ -351,6 +351,95 @@ var atmega328 = {
 
 		this.reg[_Rd] = Rd; 
 	},
+	
+	
+ 	/**
+	 *  Logical Shift Left
+	 *  
+	 *  Shifts all bits in Rd one place to the left. 
+	 *  Bit 0 is cleared. 
+	 *  Bit 7 is loaded into the C Flag of the SREG. 
+	 *  This operation effectively multiplies signed and unsigned values by two.
+	 *  
+	 *  @param Rd
+	 */
+	'lsl': function(_Rd) {
+		
+		Rd = this.reg[_Rd];
+		
+		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
+		this.sreg['C'] = Rd[7];
+		
+		/* Operation */
+		Rd[7] = Rd[6];
+		Rd[6] = Rd[5];
+		Rd[5] = Rd[4];
+		Rd[4] = Rd[3];
+		Rd[3] = Rd[2];
+		Rd[2] = Rd[1];
+		Rd[1] = Rd[0];
+		Rd[0] = false;
+		
+		this.sreg['H'] = Rd[3];
+		/* For signed tests. */
+		this.sreg['S'] = !!(this.sreg['N'] ^ this.sreg['V']);
+		/* For N and C after the shift. */
+		this.sreg['V'] = !!(this.sreg['N'] ^ this.sreg['C']);
+		/* Set if MSB of the result is set; cleared otherwise. */
+		this.sreg['N'] = Rd[7];
+		/* Set if the result is $00; cleared otherwise */
+		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		
+		/* Program Counter */
+		this.PC++;
+		
+		this.reg[_Rd] = Rd;
+	},
+	
+	
+	
+	/**
+	 * Logical Shift Right
+	 * 
+	 * Shifts all bits in Rd one place to the right. 
+	 * Bit 7 is cleared. 
+	 * Bit 0 is loaded into the C Flag of the SREG. 
+	 * This operation effectively divides an unsigned value by two. 
+	 * The C Flag can be used to round the result.
+	 * 
+	 * @param  _Rd
+	 */
+	'lsr': function(_Rd) {
+		
+		Rd = this.reg[_Rd];
+		
+		/* Set if, before the shift, the LSB of Rd was set; cleared otherwise */
+		this.sreg['C'] = Rd[0];
+		
+		/* Operation */
+		Rd[0] = Rd[1];
+		Rd[1] = Rd[2];
+		Rd[2] = Rd[3];
+		Rd[3] = Rd[4];
+		Rd[4] = Rd[5];
+		Rd[5] = Rd[6];
+		Rd[6] = Rd[7];
+		Rd[7] = false;
+		
+		/* For signed tests. */
+		this.sreg['S'] = !!(this.sreg['N'] ^ this.sreg['V']);
+		/* For N and C after the shift. */
+		this.sreg['V'] = !!(this.sreg['N'] ^ this.sreg['C']);
+
+		this.sreg['N'] = false;
+		/* Set if the result is $00; cleared otherwise */
+		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		
+		/* Program Counter */
+		this.PC++;
+		
+		this.reg[_Rd] = Rd;
+	}
 
 
 
