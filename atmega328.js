@@ -31,50 +31,50 @@ var atmega328 = {
 	/* Register space */
 	reg: {
 		/*       MSB                                                                   LSB */
-		0:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		1:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		2:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		3:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		4:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		5:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		6:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		7:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		8:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		9:  [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		10: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		11: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		12: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		13: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		14: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		15: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
+		0:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		1:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		2:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		3:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		4:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		5:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		6:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		7:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		8:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		9:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		10: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		11: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		12: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		13: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		14: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		15: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		/*       MSB                                                                   LSB */
-		16: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		17: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		18: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		19: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		20: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		21: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		22: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		23: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		24: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		25: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		26: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		27: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		28: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		29: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		30: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		31: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false]
+		16: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		17: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		18: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		19: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		20: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		21: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		22: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		23: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		24: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		25: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		26: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		27: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		28: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		29: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		30: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		31: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
 	},
 
 	stack: {
-		0: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		1: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		2: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		3: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		4: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		5: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		6: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false],
-		7: [7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false]
+		0:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		1:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		2:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		3:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		4:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		5:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		6:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		7:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 	},
 
 	memory: [],
@@ -206,7 +206,7 @@ var atmega328 = {
 	/**
 	 * Clears the Carry Flag (C) in SREG (Status Register).
 	 */
-	 'clc': funcion() {
+	 'clc': function() {
 
 		/* Carry Flag cleared */
 		this.sreg['C'] = false; 
@@ -220,7 +220,7 @@ var atmega328 = {
 	/**
 	 * Clears the Half Carry Flag (H) in SREG (Status Register). 
 	 */
-	 'clh': funcion() {
+	 'clh': function() {
 
 		/* Half Carry Flag cleared */
 		this.sreg['H'] = false; 
@@ -237,7 +237,7 @@ var atmega328 = {
 	 * No interrupt will be executed after the CLI instruction, 
 	 * even if it occurs simultaneously with the CLI instruction.
 	 */
-	 'cli': funcion() {
+	 'cli': function() {
 
 		/* Global Interrupt Flag cleared */
 		this.sreg['I'] = false; 
@@ -251,7 +251,7 @@ var atmega328 = {
 	/**
 	 * Clears the Negative Flag (N) in SREG (Status Register).
 	 */
-	 'cln': funcion() {
+	 'cln': function() {
 
 		/* Negative Flag cleared */
 		this.sreg['N'] = false; 
@@ -531,7 +531,7 @@ var atmega328 = {
 		/* Operation: Rd+1:Rd <- Rr+1:Rr */
 		/* @TODO */
 
-	}
+	},
 
 
 
@@ -585,7 +585,7 @@ var atmega328 = {
 
 
 		this.reg[_Rd] = Rd; 
-	}
+	},
 
 
 
@@ -644,7 +644,7 @@ var atmega328 = {
 		this.reg[_Rd] = this.stack[this.SP];
 
 		this.PC++;
-	}
+	},
 
 
 
@@ -662,7 +662,7 @@ var atmega328 = {
 		this.SP--;
 
 		this.PC++;
-	}
+	},
 
 
 
