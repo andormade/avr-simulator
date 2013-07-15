@@ -74,7 +74,7 @@ var atmega328 = {
 		4:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		5:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		6:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		7:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		7:  {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
 	},
 
 	memory: [],
@@ -88,7 +88,7 @@ var atmega328 = {
 	 * @param _Rd    Destination register
 	 * @param _Rr
 	 */
-	 'and': function(_Rd, _Rr) {
+	 and: function(_Rd, _Rr) {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
@@ -131,7 +131,7 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param K
 	 */
-	 'andi': function(_Rd, K) {
+	 andi: function(_Rd, K) {
 
 		var Rd = this.reg[_Rd];
 
@@ -167,7 +167,7 @@ var atmega328 = {
 	/** 
 	 * Bit clear in SREG
 	 */
-	'bclr': function(s) {
+	bclr: function(s) {
 		
 		/* @TODO */
 		
@@ -206,7 +206,7 @@ var atmega328 = {
 	/**
 	 * Clears the Carry Flag (C) in SREG (Status Register).
 	 */
-	 'clc': function() {
+	 clc: function() {
 
 		/* Carry Flag cleared */
 		this.sreg['C'] = false; 
@@ -220,7 +220,7 @@ var atmega328 = {
 	/**
 	 * Clears the Half Carry Flag (H) in SREG (Status Register). 
 	 */
-	 'clh': function() {
+	 clh: function() {
 
 		/* Half Carry Flag cleared */
 		this.sreg['H'] = false; 
@@ -237,7 +237,7 @@ var atmega328 = {
 	 * No interrupt will be executed after the CLI instruction, 
 	 * even if it occurs simultaneously with the CLI instruction.
 	 */
-	 'cli': function() {
+	 cli: function() {
 
 		/* Global Interrupt Flag cleared */
 		this.sreg['I'] = false; 
@@ -251,7 +251,7 @@ var atmega328 = {
 	/**
 	 * Clears the Negative Flag (N) in SREG (Status Register).
 	 */
-	 'cln': function() {
+	 cln: function() {
 
 		/* Negative Flag cleared */
 		this.sreg['N'] = false; 
@@ -269,19 +269,19 @@ var atmega328 = {
 	 *
 	 * @param _Rd    Destination register
 	 */
-	 'clr': function(_Rd) {
+	 clr: function(_Rd) {
 
 		var Rd = this.reg[_Rd];
 
 		/* Operation: Rd <- Rd != Rd */
-		Rd[0] = Rd[0] != Rd[0];
-		Rd[1] = Rd[1] != Rd[1];
-		Rd[2] = Rd[2] != Rd[2];
-		Rd[3] = Rd[3] != Rd[3];
-		Rd[4] = Rd[4] != Rd[4];
-		Rd[5] = Rd[5] != Rd[5];
-		Rd[6] = Rd[6] != Rd[6];
-		Rd[7] = Rd[7] != Rd[7];
+		Rd[0] = Rd[0] !== Rd[0];
+		Rd[1] = Rd[1] !== Rd[1];
+		Rd[2] = Rd[2] !== Rd[2];
+		Rd[3] = Rd[3] !== Rd[3];
+		Rd[4] = Rd[4] !== Rd[4];
+		Rd[5] = Rd[5] !== Rd[5];
+		Rd[6] = Rd[6] !== Rd[6];
+		Rd[7] = Rd[7] !== Rd[7];
 
 		this.sreg['S'] = false;
 		this.sreg['V'] = false;
@@ -300,7 +300,7 @@ var atmega328 = {
 	/**
 	 * Clears the Signed Flag (S) in SREG (Status Register). 
 	 */
-	 'cls': function() {
+	 cls: function() {
 
 		/* Signed Flag cleared */
 		this.sreg['S'] = false;
@@ -314,7 +314,7 @@ var atmega328 = {
 	/**
 	 * Clears the T Flag in SREG (Status Register).
 	 */
-	 'clt': function() {
+	 clt: function() {
 
 		/* T Flag cleared */
 		this.sreg['T'] = false;
@@ -327,7 +327,7 @@ var atmega328 = {
 	/**
 	 * Clears the Overflow Flag (V) in SREG (Status Register).
 	 */
-	 'clv': function() {
+	 clv: function() {
 
 		/* Overflow Flag cleared */
 		this.sreg['V'] = false;
@@ -340,7 +340,7 @@ var atmega328 = {
 	/**
 	 * Clears the Zero Flag (Z) in SREG (Status Register). 
 	 */
-	 'clz': function() {
+	 clz: function() {
 
 		/* Zero Flag cleared */
 		this.sreg['Z'] = false;
@@ -357,20 +357,20 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param _Rr
 	 */
-	 'eor': function() {
+	 eor: function(_Rd, _Rr) {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
 
 		/* Operation: Rd <- Rd != Rr */
-		Rd[0] = Rd[0] != Rr[0];
-		Rd[1] = Rd[1] != Rr[1];
-		Rd[2] = Rd[2] != Rr[2];
-		Rd[3] = Rd[3] != Rr[3];
-		Rd[4] = Rd[4] != Rr[4];
-		Rd[5] = Rd[5] != Rr[5];
-		Rd[6] = Rd[6] != Rr[6];
-		Rd[7] = Rd[7] != Rr[7]; 
+		Rd[0] = Rd[0] !== Rr[0];
+		Rd[1] = Rd[1] !== Rr[1];
+		Rd[2] = Rd[2] !== Rr[2];
+		Rd[3] = Rd[3] !== Rr[3];
+		Rd[4] = Rd[4] !== Rr[4];
+		Rd[5] = Rd[5] !== Rr[5];
+		Rd[6] = Rd[6] !== Rr[6];
+		Rd[7] = Rd[7] !== Rr[7]; 
 
 		/* @TODO */
 		this.sreg['S'];
@@ -400,9 +400,9 @@ var atmega328 = {
 	 *  Bit 7 is loaded into the C Flag of the SREG. 
 	 *  This operation effectively multiplies signed and unsigned values by two.
 	 *  
-	 *  @param Rd
+	 *  @param _Rd
 	 */
-	'lsl': function(_Rd) {
+	lsl: function(_Rd) {
 		
 		Rd = this.reg[_Rd];
 		
@@ -448,7 +448,7 @@ var atmega328 = {
 	 * 
 	 * @param  _Rd
 	 */
-	'lsr': function(_Rd) {
+	lsr: function(_Rd) {
 		
 		Rd = this.reg[_Rd];
 		
@@ -490,7 +490,7 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param _Rr
 	 */
-	 'mov': function(_Rd, _Rr) {
+	 mov: function(_Rd, _Rr) {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
@@ -521,7 +521,7 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param _Rr
 	 */
-	 'movw': function(_Rd, _Rr) {
+	movw: function(_Rd, _Rr) {
 
 		var Rd  = this.reg[_Rd];
 		var Rd1 = this.reg[_Rd + 1];
@@ -538,7 +538,7 @@ var atmega328 = {
 	/**
 	 * This instruction performs a single cycle No Operation.
 	 */
-	 'nop': function() {
+	 nop: function() {
 
 		/* Incrementing program cointer */
 		this.PC++;
@@ -553,7 +553,7 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param _Rr
 	 */
-	 'or': function() {
+	 or: function(_Rd, _Rr) {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
@@ -596,7 +596,7 @@ var atmega328 = {
 	 * @param _Rd
 	 * @param K
 	 */
-	 'ori': function(_Rd, K) {
+	 ori: function(_Rd, K) {
 
 		var Rd = this.reg[_Rd];
 
@@ -636,7 +636,7 @@ var atmega328 = {
 	 *
 	 * @param _Rd
 	 */
-	 'pop': function(_Rd) {
+	 pop: function(_Rd) {
 
 		this.SP++;
 
@@ -654,7 +654,7 @@ var atmega328 = {
 	 *
 	 * @param _Rr
 	 */
-	 'push': function(_Rr) {
+	 push: function(_Rr) {
 
 		/* STACK <- Rr */
 		this.stack[this.SP] = this.reg[_Rr];
@@ -671,7 +671,7 @@ var atmega328 = {
 	 * This instruction must be executed within a limited time given by the WD prescaler. 
 	 * See the Watchdog Timer hardware specification.
 	 */
-	 'wd': function() {
+	 wd: function() {
 		/* @TODO */
 
 		/* Operation: WD timer restart. */
