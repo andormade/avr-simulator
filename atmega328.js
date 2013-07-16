@@ -74,6 +74,8 @@ var atmega328 = {
 	},
 	memory: [],
 	/**
+	 * AND – Logical AND
+	 * 
 	 * Performs the logical AND between the contents of register Rd and register Rr 
 	 * and places the result in the destination register Rd.
 	 *
@@ -104,9 +106,12 @@ var atmega328 = {
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 		/* Program counter */
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * ANDI – Logical AND with Immediate
+	 * 
 	 * Performs the logical AND between the contents of register Rd and a constant 
 	 * and places the result in the destination register Rd.
 	 *
@@ -141,12 +146,15 @@ var atmega328 = {
 		this.reg[_Rd] = Rd;
 	},
 	/** 
+	 * BCLR – Bit Clear in SREG
+	 * 
 	 * Bit clear in SREG
+	 *
+	 * @param s
 	 */
 	bclr: function(s) {
 
 		/* @TODO */
-
 		switch (s) {
 			case 7:
 				this.sreg['I'] = false;
@@ -175,8 +183,102 @@ var atmega328 = {
 		}
 
 		this.PC++;
+	},	
+	/** 
+	 * BVRC - Branch if Overflow Cleared
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Overflow Flag (V) and branches relatively to PC if V is cleared.
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBC 3,k).
+	 * 
+	 * @param k
+	 */
+	brvc: function(k) {
+
+		/** Operation: If V = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg.V === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
 	},
 	/**
+	 * BRVS – Branch if Overflow Set
+	 *
+	 * Conditional relative branch. 
+	 * Tests the Overflow Flag (V) and branches relatively to PC if V is set. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBS 3,k)
+	 *
+	 * @param k
+	 */
+	brvs: function(k) {
+
+		/** Operation: If V = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg.V === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BSET – Bit Set in SREG
+	 * 
+	 * Sets a single Flag or bit in SREG.
+	 * 
+	 * @param s
+	 */
+	bset: function(s) {
+
+		switch (s) {
+			case 7:
+				this.sreg['I'] = true;
+				break;
+			case 6:
+				this.sreg['T'] = true;
+				break;
+			case 5:
+				this.sreg['H'] = true;
+				break;
+			case 4:
+				this.sreg['S'] = true;
+				break;
+			case 3:
+				this.sreg['V'] = true;
+				break;
+			case 2:
+				this.sreg['N'] = true;
+				break;
+			case 1:
+				this.sreg['Z'] = true;
+				break;
+			case 0:
+				this.sreg['C'] = true;
+				break;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BST – Bit Store from Bit in Register to T Flag in SREG
+	 * 
+	 * Stores bit b from Rd to the T Flag in SREG (Status Register).
+	 * 
+	 * @param _Rd
+	 * @param b
+	 */
+	bst: function(_Rd, b) {
+
+		this.sreg.T = _Rd[b];
+
+		this.PC++;
+	},
+	/**
+	 * CLC – Clear Carry Flag
+	 * 
 	 * Clears the Carry Flag (C) in SREG (Status Register).
 	 */
 	clc: function() {
@@ -188,6 +290,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLH – Clear Half Carry Flag 
+	 * 
 	 * Clears the Half Carry Flag (H) in SREG (Status Register). 
 	 */
 	clh: function() {
@@ -199,6 +303,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLI – Clear Global Interrupt Flag
+	 * 
 	 * Clears the Global Interrupt Flag (I) in SREG (Status Register). 
 	 * The interrupts will be immediately disabled. 
 	 * No interrupt will be executed after the CLI instruction, 
@@ -213,6 +319,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLN – Clear Negative Flag 
+	 * 
 	 * Clears the Negative Flag (N) in SREG (Status Register).
 	 */
 	cln: function() {
@@ -224,6 +332,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLR – Clear Register
+	 * 
 	 * Clears a register. 
 	 * This instruction performs an Exclusive OR between a register and itself. 
 	 * This will clear all bits in the register.
@@ -255,6 +365,8 @@ var atmega328 = {
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * CLS – Clear Signed Flag
+	 * 
 	 * Clears the Signed Flag (S) in SREG (Status Register). 
 	 */
 	cls: function() {
@@ -266,6 +378,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLT – Clear T Flag
+	 * 
 	 * Clears the T Flag in SREG (Status Register).
 	 */
 	clt: function() {
@@ -276,6 +390,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLV – Clear Overflow Flag
+	 * 
 	 * Clears the Overflow Flag (V) in SREG (Status Register).
 	 */
 	clv: function() {
@@ -286,6 +402,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * CLZ – Clear Zero Flag 
+	 * 
 	 * Clears the Zero Flag (Z) in SREG (Status Register). 
 	 */
 	clz: function() {
@@ -296,6 +414,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * EOR – Exclusive OR
+	 * 
 	 * Performs the logical EOR between the contents of register Rd and register Rr
 	 * and places the result in the destination register Rd.
 	 *
@@ -409,10 +529,10 @@ var atmega328 = {
 		this.sreg['N'] = Rd[7];
 		/* Set if the result is $00; cleared otherwise */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
-		
+
 		/* Program Counter */
 		this.PC++;
-		
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
@@ -506,6 +626,7 @@ var atmega328 = {
 		/* Operation: Rd+1:Rd <- Rr+1:Rr */
 		/* @TODO */
 
+		this.PC++;
 	},
 	/**
 	 * NOP – No Operation
