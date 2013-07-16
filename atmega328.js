@@ -27,7 +27,7 @@ var atmega328 = {
 	},
 	/* Register space */
 	reg: {
-		/*       MSB                                                                   LSB */
+		/*       MSB                                                                  LSB */
 		0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		1: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		2: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
@@ -93,6 +93,7 @@ var atmega328 = {
 		Rd[5] = Rd[5] && Rr[5];
 		Rd[6] = Rd[6] && Rr[6];
 		Rd[7] = Rd[7] && Rr[7];
+
 		/* @TODO */
 		this.sreg['S'];
 		/* Cleared */
@@ -115,6 +116,7 @@ var atmega328 = {
 	andi: function(_Rd, K) {
 
 		var Rd = this.reg[_Rd];
+
 		/* Operation: Rd <- Rd && K */
 		Rd[0] = Rd[0] && K[0];
 		Rd[1] = Rd[1] && K[1];
@@ -124,6 +126,7 @@ var atmega328 = {
 		Rd[5] = Rd[5] && K[5];
 		Rd[6] = Rd[6] && K[6];
 		Rd[7] = Rd[7] && K[7];
+
 		/* @TODO */
 		this.sreg['S'];
 		/* Cleared */
@@ -132,7 +135,9 @@ var atmega328 = {
 		this.sreg['N'] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/** 
@@ -178,6 +183,7 @@ var atmega328 = {
 
 		/* Carry Flag cleared */
 		this.sreg['C'] = false;
+
 		/* Program counter */
 		this.PC++;
 	},
@@ -188,6 +194,7 @@ var atmega328 = {
 
 		/* Half Carry Flag cleared */
 		this.sreg['H'] = false;
+
 		/* Program counter */
 		this.PC++;
 	},
@@ -201,6 +208,7 @@ var atmega328 = {
 
 		/* Global Interrupt Flag cleared */
 		this.sreg['I'] = false;
+
 		/* Program counter */
 		this.PC++;
 	},
@@ -211,6 +219,7 @@ var atmega328 = {
 
 		/* Negative Flag cleared */
 		this.sreg['N'] = false;
+
 		/* Program counter */
 		this.PC++;
 	},
@@ -224,6 +233,7 @@ var atmega328 = {
 	clr: function(_Rd) {
 
 		var Rd = this.reg[_Rd];
+
 		/* Operation: Rd <- Rd != Rd */
 		Rd[0] = Rd[0] !== Rd[0];
 		Rd[1] = Rd[1] !== Rd[1];
@@ -233,12 +243,15 @@ var atmega328 = {
 		Rd[5] = Rd[5] !== Rd[5];
 		Rd[6] = Rd[6] !== Rd[6];
 		Rd[7] = Rd[7] !== Rd[7];
+
 		this.sreg['S'] = false;
 		this.sreg['V'] = false;
 		this.sreg['N'] = false;
 		this.sreg['Z'] = true;
+
 		/* Program counter */
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
@@ -248,6 +261,7 @@ var atmega328 = {
 
 		/* Signed Flag cleared */
 		this.sreg['S'] = false;
+
 		/* Program counter */
 		this.PC++;
 	},
@@ -258,6 +272,7 @@ var atmega328 = {
 
 		/* T Flag cleared */
 		this.sreg['T'] = false;
+
 		this.PC++;
 	},
 	/**
@@ -267,6 +282,7 @@ var atmega328 = {
 
 		/* Overflow Flag cleared */
 		this.sreg['V'] = false;
+
 		this.PC++;
 	},
 	/**
@@ -276,6 +292,7 @@ var atmega328 = {
 
 		/* Zero Flag cleared */
 		this.sreg['Z'] = false;
+
 		this.PC++;
 	},
 	/**
@@ -289,6 +306,7 @@ var atmega328 = {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
+
 		/* Operation: Rd <- Rd != Rr */
 		Rd[0] = Rd[0] !== Rr[0];
 		Rd[1] = Rd[1] !== Rr[1];
@@ -298,6 +316,7 @@ var atmega328 = {
 		Rd[5] = Rd[5] !== Rr[5];
 		Rd[6] = Rd[6] !== Rr[6];
 		Rd[7] = Rd[7] !== Rr[7];
+
 		/* @TODO */
 		this.sreg['S'];
 		/* Cleared */
@@ -306,8 +325,51 @@ var atmega328 = {
 		this.sreg['N'] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
 		/* Program counter */
 		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * JMP – Jump
+	 * 
+	 * Jump to an address within the entire 4M (words) Program memory. 
+	 * See also RJMP.
+	 * 
+	 * @param k
+	 */
+	jmp: function(k) {
+
+		/* @TODO */
+
+		this.PC = k;
+
+	},
+	/**
+	 * LDI – Load Immediate
+	 * 
+	 * Loads an 8 bit constant directly to register 16 to 31.
+	 * 
+	 * @param {type} _Rd
+	 * @param {type} K
+	 */
+	ldi: function(_Rd, K) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Operation Rd <- K */
+		Rd[0] = K[0];
+		Rd[1] = K[1];
+		Rd[2] = K[2];
+		Rd[3] = K[3];
+		Rd[4] = K[4];
+		Rd[5] = K[5];
+		Rd[6] = K[6];
+		Rd[7] = K[7];
+
+		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
@@ -322,9 +384,11 @@ var atmega328 = {
 	 */
 	lsl: function(_Rd) {
 
-		Rd = this.reg[_Rd];
+		var Rd = this.reg[_Rd];
+
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
 		this.sreg['C'] = Rd[7];
+
 		/* Operation */
 		Rd[7] = Rd[6];
 		Rd[6] = Rd[5];
@@ -334,6 +398,8 @@ var atmega328 = {
 		Rd[2] = Rd[1];
 		Rd[1] = Rd[0];
 		Rd[0] = false;
+
+		/* @TODO */
 		this.sreg['H'] = Rd[3];
 		/* For signed tests. */
 		this.sreg['S'] = !!(this.sreg['N'] ^ this.sreg['V']);
@@ -343,8 +409,10 @@ var atmega328 = {
 		this.sreg['N'] = Rd[7];
 		/* Set if the result is $00; cleared otherwise */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		
 		/* Program Counter */
 		this.PC++;
+		
 		this.reg[_Rd] = Rd;
 	},
 	/**
@@ -361,8 +429,10 @@ var atmega328 = {
 	lsr: function(_Rd) {
 
 		Rd = this.reg[_Rd];
+
 		/* Set if, before the shift, the LSB of Rd was set; cleared otherwise */
 		this.sreg['C'] = Rd[0];
+
 		/* Operation */
 		Rd[0] = Rd[1];
 		Rd[1] = Rd[2];
@@ -372,6 +442,8 @@ var atmega328 = {
 		Rd[5] = Rd[6];
 		Rd[6] = Rd[7];
 		Rd[7] = false;
+
+		/* @TODO */
 		/* For signed tests. */
 		this.sreg['S'] = !!(this.sreg['N'] ^ this.sreg['V']);
 		/* For N and C after the shift. */
@@ -379,11 +451,15 @@ var atmega328 = {
 		this.sreg['N'] = false;
 		/* Set if the result is $00; cleared otherwise */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
 		/* Program Counter */
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * MOV – Copy Registe
+	 * 
 	 * This instruction makes a copy of one register into another. 
 	 * The source register Rr is left unchanged, 
 	 * while the destination register Rd is loaded with a copy of Rr.
@@ -395,6 +471,7 @@ var atmega328 = {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
+
 		/* Operation: Rd <- Rr */
 		Rd[0] = Rr[0];
 		Rd[1] = Rr[1];
@@ -404,10 +481,14 @@ var atmega328 = {
 		Rd[5] = Rr[5];
 		Rd[6] = Rr[6];
 		Rd[7] = Rr[7];
+
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * MOVW – Copy Register Word
+	 * 
 	 * This instruction makes a copy of one register pair into another register pair. 
 	 * The source register pair Rr+1:Rr is left unchanged, 
 	 * while the destination register pair Rd+1:Rd is loaded with a copy of Rr + 1:Rr.
@@ -421,11 +502,14 @@ var atmega328 = {
 		var Rd1 = this.reg[_Rd + 1];
 		var Rr = this.reg[_Rr];
 		var Rr1 = this.reg[_Rr + 1];
+
 		/* Operation: Rd+1:Rd <- Rr+1:Rr */
 		/* @TODO */
 
 	},
 	/**
+	 * NOP – No Operation
+	 * 
 	 * This instruction performs a single cycle No Operation.
 	 */
 	nop: function() {
@@ -434,6 +518,8 @@ var atmega328 = {
 		this.PC++;
 	},
 	/**
+	 * OR – Logical OR
+	 * 
 	 * Performs the logical OR between the contents of register Rd and register Rr 
 	 * and places the result in the destination register Rd.
 	 *
@@ -444,6 +530,7 @@ var atmega328 = {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
+
 		/* Operation: Rd <- Rd || Rr */
 		Rd[0] = Rd[0] || Rr[0];
 		Rd[1] = Rd[1] || Rr[1];
@@ -453,6 +540,7 @@ var atmega328 = {
 		Rd[5] = Rd[5] || Rr[5];
 		Rd[6] = Rd[6] || Rr[6];
 		Rd[7] = Rd[7] || Rr[7];
+
 		/* @TODO */
 		this.sreg['S'];
 		/* Cleared */
@@ -461,11 +549,15 @@ var atmega328 = {
 		this.sreg['N'] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
 		/* Program counter */
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * ORI – Logical OR with Immediate
+	 * 
 	 * Performs the logical OR between the contents of register Rd and a constant 
 	 * and places the result in the destination register Rd.
 	 *
@@ -475,6 +567,7 @@ var atmega328 = {
 	ori: function(_Rd, K) {
 
 		var Rd = this.reg[_Rd];
+
 		/* Operation: Rd <- Rd v K */
 		Rd[0] = Rd[0] || K[0];
 		Rd[1] = Rd[1] || K[1];
@@ -484,6 +577,7 @@ var atmega328 = {
 		Rd[5] = Rd[5] || K[5];
 		Rd[6] = Rd[6] || K[6];
 		Rd[7] = Rd[7] || K[7];
+
 		/* @TODO */
 		this.sreg['S'];
 		/* Cleared */
@@ -492,10 +586,14 @@ var atmega328 = {
 		this.sreg['N'] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
 		this.PC++;
+
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * POP – Pop Register from Stack
+	 * 
 	 * This instruction loads register Rd with a byte from the STACK. 
 	 * The Stack Pointer is pre-incremented by 1 before the POP.
 	 *
@@ -504,11 +602,14 @@ var atmega328 = {
 	pop: function(_Rd) {
 
 		this.SP++;
+
 		/* Rd <- STACK */
 		this.reg[_Rd] = this.stack[this.SP];
 		this.PC++;
 	},
 	/**
+	 * PUSH – Push Register on Stack
+	 * 
 	 * This instruction stores the contents of register Rr on the STACK. 
 	 * The Stack Pointer is post-decremented by 1 after the PUSH.
 	 *
@@ -518,7 +619,9 @@ var atmega328 = {
 
 		/* STACK <- Rr */
 		this.stack[this.SP] = this.reg[_Rr];
+
 		this.SP--;
+
 		this.PC++;
 	},
 	/**
@@ -535,9 +638,80 @@ var atmega328 = {
 
 		var Rd = this.reg[_Rd];
 
-		/* @TODO */
+		/* Rd3 */
+		this.sreg.H = Rd[3];
+		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
+		this.sreg.C = Rd[7];
 
+		/* Operation: C <- b7 <- ... <- b0 <- C */
+		Rd[7] = Rd[6];
+		Rd[6] = Rd[5];
+		Rd[5] = Rd[4];
+		Rd[4] = Rd[3];
+		Rd[3] = Rd[2];
+		Rd[2] = Rd[1];
+		Rd[1] = Rd[0];
+		Rd[0] = this.sreg.C;
 
+		/* Set if MSB of the result is set; cleared otherwise. */
+		this.sreg.N = Rd[7];
+		/* N ^ C (For N and C after the shift) */
+		this.sreg.V = !!(this.sreg.N ^ this.sreg.C);
+		/* N ^ V, For signed tests. */
+		this.sreg.S = !!(this.sreg.N ^ this.sreg.V);
+		/* Set if the result is $00; cleared otherwise. */
+		this.sreg.Z = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+
+		/* Save changes */
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * ROR – Rotate Right through Carry
+	 * 
+	 * Shifts all bits in Rd one place to the right. 
+	 * The C Flag is shifted into bit 7 of Rd.
+	 * Bit 0 is shifted into the C Flag. 
+	 * This operation, combined with ASR, effectively divides multi-byte signed values by two. 
+	 * Combined with LSR it effectively divides multibyte unsigned values by two. 
+	 * The Carry Flag can be used to round the result.
+	 * 
+	 * @param _Rd
+	 */
+	ror: function(_Rd) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Rd3 */
+		this.sreg.H = Rd[3];
+		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
+		this.sreg.C = Rd[0];
+
+		Rd[0] = Rd[1];
+		Rd[1] = Rd[2];
+		Rd[2] = Rd[3];
+		Rd[3] = Rd[4];
+		Rd[4] = Rd[5];
+		Rd[5] = Rd[6];
+		Rd[6] = Rd[7];
+		Rd[7] = this.sreg.C;
+
+		/* Set if MSB of the result is set; cleared otherwise. */
+		this.sreg.N = Rd[7];
+		/* N ^ C (For N and C after the shift) */
+		this.sreg.V = !!(this.sreg.N ^ this.sreg.C);
+		/* N ^ V, For signed tests. */
+		this.sreg.S = !!(this.sreg.N ^ this.sreg.V);
+		/* Set if the result is $00; cleared otherwise. */
+		this.sreg.Z = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+
+		/* Save changes */
+		this.reg[_Rd] = Rd;
 	},
 	/**
 	 * This instruction resets the Watchdog Timer. 
