@@ -8,22 +8,14 @@ var atmega328 = {
 	SPH: 0,
 	/** SREG */
 	sreg: {
-		/** Global interrupt enable */
-		'I': false,
-		/** Bit Copy Storage */
-		'T': false,
-		/** Half Carry Flag */
-		'H': false,
-		/** Sign Bit */
-		'S': false,
-		/** Two's Complement Overflow Flag */
-		'V': false,
-		/** Negative Flag */
-		'N': false,
-		/* Zero flag */
-		'Z': false,
-		/** CaRry flag */
-		'C': false
+		7: false, /* I - Global interrupt enable */
+		6: false, /* T - Bit Copy Storage */
+		5: false, /* H - Half Carry Flag */
+		4: false, /* S - Sign Bit */
+		3: false, /* V - Two's Complement Overflow Flag */
+		2: false, /* N - Negative Flag */
+		1: false, /* Z - Zero flag */
+		0: false /*  C - Carry flag */
 	},
 	/* Register space */
 	reg: {
@@ -183,7 +175,401 @@ var atmega328 = {
 		}
 
 		this.PC++;
-	},	
+	},
+	/**
+	 * BRBC – Branch if Bit in SREG is Cleared
+	 * 
+	 * Conditional relative branch.
+	 * Tests a single bit in SREG and branches relatively to PC if the bit is cleared. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * 
+	 * @param s
+	 * @param k
+	 */
+	brbc: function(s, k) {
+
+		/* Operation: If SREG(s) = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[s] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRBS – Branch if Bit in SREG is Set
+	 * 
+	 * Conditional relative branch. 
+	 * Tests a single bit in SREG and branches relatively to PC if the bit is set. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * 
+	 * @param s
+	 * @param k
+	 */
+	brbs: function(s, k) {
+
+		/* Operation: If SREG(s) = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[s] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRCC – Branch if Carry Cleared
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Carry Flag (C) and branches relatively to PC if C is cleared. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBC 0,k).
+	 * 
+	 * @param k
+	 */
+	brcc: function(k) {
+
+		/* Operation: If C = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[0] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRCS – Branch if Carry Set
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Carry Flag (C) and branches relatively to PC if C is set. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBS 0,k).
+	 * 
+	 * @param k
+	 */
+	brcs: function(k) {
+
+		/* Operation: If C = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[0] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BREAK – Break
+	 * 
+	 * The BREAK instruction is used by the On-chip Debug system, and is normally not used in the application software. 
+	 * When the BREAK instruction is executed, the AVR CPU is set in the Stopped Mode. 
+	 * This gives the On-chip Debugger access to internal resources.
+	 * If any Lock bits are set, or either the JTAGEN or OCDEN Fuses are unprogrammed, 
+	 * the CPU will treat the BREAK instruction as a NOP and will not enter the Stopped mode.
+	 */
+	'break': function() {
+
+		this.PC++;
+	},
+	/**
+	 * BREQ – Branch if Equal
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Zero Flag (Z) and branches relatively to PC if Z is set. 
+	 * If the instruction is executed immediately after any of the instructions CP, CPI, SUB or SUBI, 
+	 * the branch will occur if and only if the unsigned or signed binary number represented in Rd was equal 
+	 * to the unsigned or signed binary number represented in Rr. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * (Equivalent to instruction BRBS 1,k).
+	 * 
+	 * @param {type} k
+	 * @returns {undefined}
+	 */
+	breq: function(k) {
+
+		/* Operation: If Rd = Rr (Z = 1) then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[1] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRGE – Branch if Greater or Equal (Signed)
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Signed Flag (S) and branches relatively to PC if S is cleared. 
+	 * If the instruction is executed immediately after any of the instructions CP, CPI, SUB or SUBI,
+	 * the branch will occur if and only if the signed binary number represented in Rd was greater than or equal 
+	 * to the signed binary number represented in Rr. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * Equivalent to instruction BRBC 4,k).
+	 * 
+	 * @param {type} k
+	 */
+	brge: function(k) {
+
+		/* Operation: If Rd ≥ Rr (N ⊕ V = 0) then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[4] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRHC – Branch if Half Carry Flag is Cleared
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Half Carry Flag (H) and branches relatively to PC if H is cleared. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBC 5,k).
+	 * 
+	 * @param k
+	 */
+	brhc: function(k) {
+
+		/* Operation: If H = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[5] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRHS – Branch if Half Carry Flag is Set
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Half Carry Flag (H) and branches relatively to PC if H is set. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBS 5,k).
+	 * 
+	 * @param k
+	 */
+	brhs: function(k) {
+
+		/* Operation: If H = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[5] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRID – Branch if Global Interrupt is Disabled
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Global Interrupt Flag (I) and branches relatively to PC if I is cleared. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBC 7,k).
+	 * 
+	 * @param k
+	 */
+	brid: function(k) {
+
+		/* If I = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[7] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRIE – Branch if Global Interrupt is Enabled
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Global Interrupt Flag (I) and branches relatively to PC if I is set.
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBS 7,k).
+	 * 
+	 * @param k
+	 */
+	brie: function(k) {
+
+		/* If I = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[7] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+
+	},
+	/**
+	 * BRLO – Branch if Lower (Unsigned)
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Carry Flag (C) and branches relatively to PC if C is set. 
+	 * If the instruction is executed immediately after any of the instructions CP, CPI, SUB or SUBI, 
+	 * the branch will occur if and only if the unsigned binary number represented in Rd was smaller 
+	 * than the unsigned binary number represented in Rr. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * (Equivalent to instruction BRBS 0,k).
+	 * 
+	 * @param k
+	 */
+	brlo: function(k) {
+
+		/* Operation: If Rd < Rr (C = 1) then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[0] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRLT – Branch if Less Than (Signed)
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Signed Flag (S) and branches relatively to PC if S is set. 
+	 * If the instruction is executed immediately after any of the instructions CP, CPI, SUB or SUBI, 
+	 * the branch will occur if and only if the signed binary number represented in Rd was less 
+	 * than the signed binary number represented in Rr.
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBS 4,k).
+	 * 
+	 * @param k
+	 */
+	brlt: function(k) {
+
+		/* Operation: If Rd < Rr (N ⊕ V = 1) then PC ← PC + k + 1, else PC ← PC + 1 */
+		if (this.sreg[4] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+
+	},
+	/**
+	 * BRMI – Branch if Minus
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Negative Flag (N) and branches relatively to PC if N is set. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form. 
+	 * (Equivalent to instruction BRBS 2,k).
+	 * 
+	 * @param k
+	 */
+	brmi: function(k) {
+
+		/* If N = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[2] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRNE – Branch if Not Equal
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Zero Flag (Z) and branches relatively to PC if Z is cleared. 
+	 * If the instruction is executed immediately after any of the instructions CP, CPI, SUB or SUBI, 
+	 * the branch will occur if and only if the unsigned or signed binary number represented in Rd was not equal 
+	 * to the unsigned or signed binary number represented in Rr. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * (Equivalent to instruction BRBC 1,k).
+	 * 
+	 * @param k
+	 */
+	brne: function(k) {
+
+		/* If Rd != Rr (Z = 0) then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[1] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRPL – Branch if Plus
+	 * 
+	 * Conditional relative branch.
+	 * Tests the Negative Flag (N) and branches relatively to PC if N is cleared.
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is brepresented in two’s complement form.
+	 * (Equivalent to instruction BRBC 2,k).
+	 * 
+	 * @param k
+	 */
+	brpl: function(k) {
+
+		/* Operation: If N = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[2] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRSH – Branch if Same or Higher (Unsigned)
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the Carry Flag (C) and branches relatively to PC if C is cleared.
+	 * If the instruction is executed immediately after execution of any of the instructions CP, CPI, SUB or SUBI,
+	 * the branch will occur if and only if the unsigned binary number represented in Rd was greater than or equal
+	 * to the unsigned binary number represented in Rr. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * (Equivalent to instruction BRBC 0,k).
+	 *
+	 * @param k
+	 */
+	brsh: function(k) {
+
+		/* Operation: If Rd >= Rr (C = 0) then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[0] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRTC – Branch if the T Flag is Cleared
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the T Flag and branches relatively to PC if T is cleared. 
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64). 
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * (Equivalent to instruction BRBC 6,k).
+	 * 
+	 * @param k
+	 */
+	brtc: function(k) {
+
+		/* Operation: If T = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[6] === false) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
+	/**
+	 * BRTS – Branch if the T Flag is Set
+	 * 
+	 * Conditional relative branch. 
+	 * Tests the T Flag and branches relatively to PC if T is set.
+	 * This instruction branches relatively to PC in either direction (PC - 63 ≤ destination ≤ PC + 64).
+	 * The parameter k is the offset from PC and is represented in two’s complement form.
+	 * (Equivalent to instruction BRBS 6,k).
+	 * 
+	 * @param k
+	 */
+	brts: function(k) {
+
+		/* Operation: If T = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[6] === true) {
+			this.PC = this.PC + k;
+		}
+
+		this.PC++;
+	},
 	/** 
 	 * BVRC - Branch if Overflow Cleared
 	 * 
@@ -197,8 +583,8 @@ var atmega328 = {
 	 */
 	brvc: function(k) {
 
-		/** Operation: If V = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg.V === false) {
+		/* Operation: If V = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
+		if (this.sreg[3] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -218,7 +604,7 @@ var atmega328 = {
 	brvs: function(k) {
 
 		/** Operation: If V = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg.V === true) {
+		if (this.sreg[3] === true) {
 			this.PC = this.PC + k;
 		}
 
