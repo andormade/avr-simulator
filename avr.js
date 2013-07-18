@@ -1,5 +1,5 @@
 "use strict";
-var avr = {
+var atmega328 = {
 	/** Program counter */
 	PC: 0,
 	/** Stack pointer */
@@ -20,39 +20,39 @@ var avr = {
 	/* Register space */
 	reg: {
 		/*       MSB                                                                  LSB */
-		0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		1: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		2: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		3: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		4: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		5: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		6: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		7: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		8: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		9: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		10: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		11: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		12: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		13: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		14: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		15: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r1: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r2: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r3: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r4: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r5: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r6: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r7: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r8: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r9: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r10: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r11: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r12: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r13: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r14: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r15: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		/*       MSB                                                                   LSB */
-		16: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		17: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		18: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		19: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		20: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		21: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		22: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		23: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		24: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		25: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		26: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		27: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		28: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		29: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		30: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		31: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
+		r16: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r17: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r18: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r19: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r20: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r21: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r22: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r23: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r24: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r25: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r26: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r27: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r28: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r29: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r30: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
+		r31: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
 	},
 	stack: {
 		0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
@@ -147,32 +147,7 @@ var avr = {
 	bclr: function(s) {
 
 		/* @TODO */
-		switch (s) {
-			case 7:
-				this.sreg[7] = false;
-				break;
-			case 6:
-				this.sreg[6] = false;
-				break;
-			case 5:
-				this.sreg[5] = false;
-				break;
-			case 4:
-				this.sreg[4] = false;
-				break;
-			case 3:
-				this.sreg[3] = false;
-				break;
-			case 2:
-				this.sreg[2] = false;
-				break;
-			case 1:
-				this.sreg[1] = false;
-				break;
-			case 0:
-				this.sreg[0] = false;
-				break;
-		}
+		this.sreg[s] = false;
 
 		this.PC++;
 	},
@@ -619,32 +594,8 @@ var avr = {
 	 */
 	bset: function(s) {
 
-		switch (s) {
-			case 7:
-				this.sreg[7] = true;
-				break;
-			case 6:
-				this.sreg[6] = true;
-				break;
-			case 5:
-				this.sreg[5] = true;
-				break;
-			case 4:
-				this.sreg[4] = true;
-				break;
-			case 3:
-				this.sreg[3] = true;
-				break;
-			case 2:
-				this.sreg[2] = true;
-				break;
-			case 1:
-				this.sreg[1] = true;
-				break;
-			case 0:
-				this.sreg[0] = true;
-				break;
-		}
+		this.sreg[s] = true;
+		/* @TODO */
 
 		this.PC++;
 	},
