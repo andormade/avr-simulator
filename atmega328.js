@@ -89,13 +89,13 @@ var atmega328 = {
 		Rd[7] = Rd[7] && Rr[7];
 
 		/* @TODO */
-		this.sreg['S'];
+		this.sreg[4];
 		/* Cleared */
-		this.sreg['V'] = false;
+		this.sreg[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg['N'] = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 		/* Program counter */
 		this.PC++;
 
@@ -125,13 +125,13 @@ var atmega328 = {
 		Rd[7] = Rd[7] && K[7];
 
 		/* @TODO */
-		this.sreg['S'];
+		this.sreg[4];
 		/* Cleared */
-		this.sreg['V'] = false;
+		this.sreg[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg['N'] = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		this.PC++;
 
@@ -149,28 +149,28 @@ var atmega328 = {
 		/* @TODO */
 		switch (s) {
 			case 7:
-				this.sreg['I'] = false;
+				this.sreg[7] = false;
 				break;
 			case 6:
-				this.sreg['T'] = false;
+				this.sreg[6] = false;
 				break;
 			case 5:
-				this.sreg['H'] = false;
+				this.sreg[5] = false;
 				break;
 			case 4:
-				this.sreg['S'] = false;
+				this.sreg[4] = false;
 				break;
 			case 3:
-				this.sreg['V'] = false;
+				this.sreg[3] = false;
 				break;
 			case 2:
-				this.sreg['N'] = false;
+				this.sreg[2] = false;
 				break;
 			case 1:
-				this.sreg['Z'] = false;
+				this.sreg[1] = false;
 				break;
 			case 0:
-				this.sreg['C'] = false;
+				this.sreg[0] = false;
 				break;
 		}
 
@@ -621,28 +621,28 @@ var atmega328 = {
 
 		switch (s) {
 			case 7:
-				this.sreg['I'] = true;
+				this.sreg[7] = true;
 				break;
 			case 6:
-				this.sreg['T'] = true;
+				this.sreg[6] = true;
 				break;
 			case 5:
-				this.sreg['H'] = true;
+				this.sreg[5] = true;
 				break;
 			case 4:
-				this.sreg['S'] = true;
+				this.sreg[4] = true;
 				break;
 			case 3:
-				this.sreg['V'] = true;
+				this.sreg[3] = true;
 				break;
 			case 2:
-				this.sreg['N'] = true;
+				this.sreg[2] = true;
 				break;
 			case 1:
-				this.sreg['Z'] = true;
+				this.sreg[1] = true;
 				break;
 			case 0:
-				this.sreg['C'] = true;
+				this.sreg[0] = true;
 				break;
 		}
 
@@ -658,7 +658,7 @@ var atmega328 = {
 	 */
 	bst: function(_Rd, b) {
 
-		this.sreg.T = _Rd[b];
+		this.sreg[6] = _Rd[b];
 
 		this.PC++;
 	},
@@ -670,7 +670,7 @@ var atmega328 = {
 	clc: function() {
 
 		/* Carry Flag cleared */
-		this.sreg['C'] = false;
+		this.sreg[0] = false;
 
 		/* Program counter */
 		this.PC++;
@@ -683,7 +683,7 @@ var atmega328 = {
 	clh: function() {
 
 		/* Half Carry Flag cleared */
-		this.sreg['H'] = false;
+		this.sreg[5] = false;
 
 		/* Program counter */
 		this.PC++;
@@ -699,7 +699,7 @@ var atmega328 = {
 	cli: function() {
 
 		/* Global Interrupt Flag cleared */
-		this.sreg['I'] = false;
+		this.sreg[7] = false;
 
 		/* Program counter */
 		this.PC++;
@@ -712,7 +712,7 @@ var atmega328 = {
 	cln: function() {
 
 		/* Negative Flag cleared */
-		this.sreg['N'] = false;
+		this.sreg[2] = false;
 
 		/* Program counter */
 		this.PC++;
@@ -740,10 +740,10 @@ var atmega328 = {
 		Rd[6] = Rd[6] !== Rd[6];
 		Rd[7] = Rd[7] !== Rd[7];
 
-		this.sreg['S'] = false;
-		this.sreg['V'] = false;
-		this.sreg['N'] = false;
-		this.sreg['Z'] = true;
+		this.sreg[4] = false;
+		this.sreg[3] = false;
+		this.sreg[2] = false;
+		this.sreg[1] = true;
 
 		/* Program counter */
 		this.PC++;
@@ -758,7 +758,7 @@ var atmega328 = {
 	cls: function() {
 
 		/* Signed Flag cleared */
-		this.sreg['S'] = false;
+		this.sreg[4] = false;
 
 		/* Program counter */
 		this.PC++;
@@ -771,7 +771,7 @@ var atmega328 = {
 	clt: function() {
 
 		/* T Flag cleared */
-		this.sreg['T'] = false;
+		this.sreg[6] = false;
 
 		this.PC++;
 	},
@@ -783,7 +783,7 @@ var atmega328 = {
 	clv: function() {
 
 		/* Overflow Flag cleared */
-		this.sreg['V'] = false;
+		this.sreg[3] = false;
 
 		this.PC++;
 	},
@@ -795,7 +795,7 @@ var atmega328 = {
 	clz: function() {
 
 		/* Zero Flag cleared */
-		this.sreg['Z'] = false;
+		this.sreg[1] = false;
 
 		this.PC++;
 	},
@@ -824,13 +824,13 @@ var atmega328 = {
 		Rd[7] = Rd[7] !== Rr[7];
 
 		/* @TODO */
-		this.sreg['S'];
+		this.sreg[4];
 		/* Cleared */
-		this.sreg['V'] = false;
+		this.sreg[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg['N'] = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program counter */
 		this.PC++;
@@ -893,7 +893,7 @@ var atmega328 = {
 		var Rd = this.reg[_Rd];
 
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
-		this.sreg['C'] = Rd[7];
+		this.sreg[0] = Rd[7];
 
 		/* Operation */
 		Rd[7] = Rd[6];
@@ -906,15 +906,15 @@ var atmega328 = {
 		Rd[0] = false;
 
 		/* @TODO */
-		this.sreg['H'] = Rd[3];
+		this.sreg[5] = Rd[3];
 		/* For signed tests. */
-		this.sreg['S'] = !!(this.sreg['N'] ^ this.sreg['V']);
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
 		/* For N and C after the shift. */
-		this.sreg['V'] = !!(this.sreg['N'] ^ this.sreg['C']);
+		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg['N'] = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter */
 		this.PC++;
@@ -937,7 +937,7 @@ var atmega328 = {
 		Rd = this.reg[_Rd];
 
 		/* Set if, before the shift, the LSB of Rd was set; cleared otherwise */
-		this.sreg['C'] = Rd[0];
+		this.sreg[0] = Rd[0];
 
 		/* Operation */
 		Rd[0] = Rd[1];
@@ -951,12 +951,12 @@ var atmega328 = {
 
 		/* @TODO */
 		/* For signed tests. */
-		this.sreg['S'] = !!(this.sreg['N'] ^ this.sreg['V']);
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
 		/* For N and C after the shift. */
-		this.sreg['V'] = !!(this.sreg['N'] ^ this.sreg['C']);
-		this.sreg['N'] = false;
+		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
+		this.sreg[2] = false;
 		/* Set if the result is $00; cleared otherwise */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter */
 		this.PC++;
@@ -1049,13 +1049,13 @@ var atmega328 = {
 		Rd[7] = Rd[7] || Rr[7];
 
 		/* @TODO */
-		this.sreg['S'];
+		this.sreg[4];
 		/* Cleared */
-		this.sreg['V'] = false;
+		this.sreg[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg['N'] = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program counter */
 		this.PC++;
@@ -1086,13 +1086,13 @@ var atmega328 = {
 		Rd[7] = Rd[7] || K[7];
 
 		/* @TODO */
-		this.sreg['S'];
+		this.sreg[4];
 		/* Cleared */
-		this.sreg['V'] = false;
+		this.sreg[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg['N'] = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg['Z'] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		this.PC++;
 
@@ -1146,9 +1146,9 @@ var atmega328 = {
 		var Rd = this.reg[_Rd];
 
 		/* Rd3 */
-		this.sreg.H = Rd[3];
+		this.sreg[5] = Rd[3];
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
-		this.sreg.C = Rd[7];
+		this.sreg[0] = Rd[7];
 
 		/* Operation: C <- b7 <- ... <- b0 <- C */
 		Rd[7] = Rd[6];
@@ -1158,16 +1158,16 @@ var atmega328 = {
 		Rd[3] = Rd[2];
 		Rd[2] = Rd[1];
 		Rd[1] = Rd[0];
-		Rd[0] = this.sreg.C;
+		Rd[0] = this.sreg[0];
 
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg.N = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* N ^ C (For N and C after the shift) */
-		this.sreg.V = !!(this.sreg.N ^ this.sreg.C);
+		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
 		/* N ^ V, For signed tests. */
-		this.sreg.S = !!(this.sreg.N ^ this.sreg.V);
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg.Z = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -1192,9 +1192,9 @@ var atmega328 = {
 		var Rd = this.reg[_Rd];
 
 		/* Rd3 */
-		this.sreg.H = Rd[3];
+		this.sreg[5] = Rd[3];
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
-		this.sreg.C = Rd[0];
+		this.sreg[0] = Rd[0];
 
 		Rd[0] = Rd[1];
 		Rd[1] = Rd[2];
@@ -1203,16 +1203,16 @@ var atmega328 = {
 		Rd[4] = Rd[5];
 		Rd[5] = Rd[6];
 		Rd[6] = Rd[7];
-		Rd[7] = this.sreg.C;
+		Rd[7] = this.sreg[0];
 
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg.N = Rd[7];
+		this.sreg[2] = Rd[7];
 		/* N ^ C (For N and C after the shift) */
-		this.sreg.V = !!(this.sreg.N ^ this.sreg.C);
+		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
 		/* N ^ V, For signed tests. */
-		this.sreg.S = !!(this.sreg.N ^ this.sreg.V);
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg.Z = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
