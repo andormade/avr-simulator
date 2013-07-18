@@ -1,4 +1,37 @@
 "use strict";
+
+/**
+ * 8-bit AVR Instruction set written in Javascript
+ * by Andor Polgar (hngrhorace) 2013
+ * 
+ * 
+ * 
+ * Nomenclature
+ * 
+ * Status register (SREG)
+ * SREG: Status register
+ * C:    Carry Flag
+ * Z:    Zero Flag
+ * N:    Negative Flag
+ * V:    Two's complement overflow indicator
+ * S:    N ^ V, For signed tests
+ * H:    Half Carry Flag
+ * T:    Transfer bit used by BLD and BST instructions
+ * I:    Global Interrupt Enable/Disable Flag
+ * 
+ * Registers and Operands
+ * Rd:      Destination (and source) register in the Register File
+ * Rr:      Source register
+ * R:       Result after instruction is executed
+ * K:       Constant data
+ * k:       Constant address
+ * b:       Bit in the Register File or I/O Register (3-bit)
+ * s:       Bit in the Status Register (3-bit)
+ * X, Y, Z: Indirect Address Register
+ * A:       I/O location address
+ * q:       Displacement for direct addressing (6-bit)
+ * 
+ */
 var atmega328 = {
 	/** Program counter */
 	PC: 0,
@@ -1172,24 +1205,24 @@ var atmega328 = {
 		this.reg[_Rd] = Rd;
 	},
 	swap: function(_Rd) {
-		
+
 		var Rd = this.reg[_Rd];
 		var R = [false, false, false, false, false, false, false, false];
-		
+
 		/* Operation: R(7:4) <- Rd(3:0), R(3:0) <- Rd(7:4) */
 		R[7] = Rd[3];
 		R[6] = Rd[2];
 		R[5] = Rd[1];
 		R[4] = Rd[0];
-		
+
 		R[3] = Rd[7];
 		R[2] = Rd[6];
 		R[1] = Rd[5];
 		R[0] = Rd[4];
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.reg[_Rd] = R;
 	},
 	/**
@@ -1204,7 +1237,7 @@ var atmega328 = {
 	tst: function(_Rd) {
 
 		var Rd = this.reg[_Rd];
-		
+
 		/* Operation: Rd <- Rd && Rd */
 		Rd[0] = Rd[0] && Rd[0];
 		Rd[1] = Rd[1] && Rd[1];
@@ -1214,7 +1247,7 @@ var atmega328 = {
 		Rd[5] = Rd[5] && Rd[5];
 		Rd[6] = Rd[6] && Rd[6];
 		Rd[7] = Rd[7] && Rd[7];
-		
+
 		/* Z: Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
 		/* N: Set if MSB of the result is set; cleared otherwis. */
@@ -1227,7 +1260,7 @@ var atmega328 = {
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;		
+		this.reg[_Rd] = Rd;
 	},
 	/**
 	 * This instruction resets the Watchdog Timer. 
