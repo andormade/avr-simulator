@@ -32,7 +32,7 @@
  * q:       Displacement for direct addressing (6-bit)
  * 
  */
-var atmega328 = {
+var avr = {
 	/** Program counter */
 	PC: 0,
 	/** Stack pointer */
