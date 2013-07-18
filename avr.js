@@ -87,6 +87,8 @@ var avr = {
 		r30: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		r31: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
 	},
+	io: {
+	},
 	stack: {
 		0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
 		1: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
@@ -129,7 +131,8 @@ var avr = {
 		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
-		/* Program counter */
+		
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -166,6 +169,7 @@ var avr = {
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -182,6 +186,7 @@ var avr = {
 		/* @TODO */
 		this.sreg[s] = false;
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -201,7 +206,8 @@ var avr = {
 		if (this.sreg[s] === false) {
 			this.PC = this.PC + k;
 		}
-
+		
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -222,6 +228,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -242,6 +249,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -262,6 +270,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -275,6 +284,7 @@ var avr = {
 	 */
 	'break': function() {
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -299,6 +309,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -322,6 +333,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -342,6 +354,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -362,6 +375,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -382,6 +396,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -402,8 +417,8 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-
 	},
 	/**
 	 * BRLO – Branch if Lower (Unsigned)
@@ -426,6 +441,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -449,8 +465,8 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-
 	},
 	/**
 	 * BRMI – Branch if Minus
@@ -470,6 +486,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -493,6 +510,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -513,6 +531,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -536,6 +555,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -556,6 +576,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -576,6 +597,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/** 
@@ -596,6 +618,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -616,6 +639,7 @@ var avr = {
 			this.PC = this.PC + k;
 		}
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -630,6 +654,7 @@ var avr = {
 		this.sreg[s] = true;
 		/* @TODO */
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -644,6 +669,7 @@ var avr = {
 
 		this.sreg[6] = _Rd[b];
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -656,7 +682,7 @@ var avr = {
 		/* Carry Flag cleared */
 		this.sreg[0] = false;
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -669,7 +695,7 @@ var avr = {
 		/* Half Carry Flag cleared */
 		this.sreg[5] = false;
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -685,7 +711,7 @@ var avr = {
 		/* Global Interrupt Flag cleared */
 		this.sreg[7] = false;
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -698,7 +724,7 @@ var avr = {
 		/* Negative Flag cleared */
 		this.sreg[2] = false;
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -729,7 +755,7 @@ var avr = {
 		this.sreg[2] = false;
 		this.sreg[1] = true;
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -744,7 +770,7 @@ var avr = {
 		/* Signed Flag cleared */
 		this.sreg[4] = false;
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -757,6 +783,7 @@ var avr = {
 		/* T Flag cleared */
 		this.sreg[6] = false;
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -769,6 +796,7 @@ var avr = {
 		/* Overflow Flag cleared */
 		this.sreg[3] = false;
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -781,6 +809,7 @@ var avr = {
 		/* Zero Flag cleared */
 		this.sreg[1] = false;
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -816,7 +845,7 @@ var avr = {
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -833,6 +862,7 @@ var avr = {
 
 		/* @TODO */
 
+		/* Program Counter: PC <- k */
 		this.PC = k;
 
 	},
@@ -858,6 +888,7 @@ var avr = {
 		Rd[6] = K[6];
 		Rd[7] = K[7];
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -900,7 +931,7 @@ var avr = {
 		/* Set if the result is $00; cleared otherwise */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
-		/* Program Counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -942,7 +973,7 @@ var avr = {
 		/* Set if the result is $00; cleared otherwise */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
-		/* Program Counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -972,6 +1003,7 @@ var avr = {
 		Rd[6] = Rr[6];
 		Rd[7] = Rr[7];
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -996,6 +1028,34 @@ var avr = {
 		/* Operation: Rd+1:Rd <- Rr+1:Rr */
 		/* @TODO */
 
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	mul: function() {
+		/* @TODO */
+		
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	muls: function() {
+		/* @TODO */
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	mulsu: function() {
+
+		/* @TODO */
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	neg: function() {
+		
+		/* @TODO */
+		
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -1005,7 +1065,7 @@ var avr = {
 	 */
 	nop: function() {
 
-		/* Incrementing program cointer */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -1041,7 +1101,7 @@ var avr = {
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
-		/* Program counter */
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
@@ -1078,9 +1138,23 @@ var avr = {
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * OUT – Store Register to I/O Location
+	 * 
+	 * Stores data from register Rr in the Register File to I/O Space (Ports, Timers, Configuration Registers etc.).
+	 * 
+	 * @param A
+	 * @param _Rr
+	 */
+	out: function(A, _Rr) {
+
+		/* @TODO */
+
 	},
 	/**
 	 * POP – Pop Register from Stack
@@ -1096,6 +1170,8 @@ var avr = {
 
 		/* Rd <- STACK */
 		this.reg[_Rd] = this.stack[this.SP];
+		
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	/**
@@ -1113,7 +1189,45 @@ var avr = {
 
 		this.SP--;
 
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
+	},
+	rcall: function() {
+
+		/* @TODO */
+		
+				
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	ret: function() {
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	reti: function() {
+	
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * RJMP – Relative Jump 
+	 * 
+	 * Relative jump to an address within PC - 2K +1 and PC + 2K (words).
+	 * For AVR microcontrollers with Program memory not exceeding 4K words (8K bytes) this instruction can address 
+	 * the entire memory from every address location. See also JMP.
+	 * 
+	 * @param k    -2K <= k <= 2K
+	 */
+	rjmp: function(k) {
+
+		/* Program Counter: PC ← PC + k + 1 */
+		this.PC += k + 1;
 	},
 	/**
 	 * ROL – Rotate Left trough Carry
@@ -1204,6 +1318,413 @@ var avr = {
 		/* Save changes */
 		this.reg[_Rd] = Rd;
 	},
+	/**
+	 * SBC – Subtract with Carry
+	 * 
+	 * Subtracts two registers and subtracts with the C Flag and places the result in the destination register Rd.
+	 * 
+	 * @param _Rd
+	 * @param _Rr
+	 */
+	sbc: function(_Rd, _Rr) {
+		
+		/* Operation: Rd <- Rd - Rr - C */
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SBCI – Subtract Immediate with Carry
+	 * 
+	 * Subtracts a constant from a register and subtracts with the C Flag 
+	 * and places the result in the destination register Rd.
+	 * 
+	 * @param _Rd    16 <= d <= 31
+	 * @param K       0 <= K <= 255
+	 */
+	sbci: function(_Rd, K) {
+
+		/* Operation: Rd <- Rd - K - C */
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SBI – Set Bit in I/O Register
+	 * 
+	 * Sets a specified bit in an I/O Register. 
+	 * This instruction operates on the lower 32 I/O Registers – addresses 0-31
+	 * 
+	 * @param A    0 <= A <= 31
+	 * @param b    0 <= b <= 7
+	 */
+	sbi: function(A, b) {
+
+		/* Operation: I/O(A,b) <- 1 */
+		this.io[A][b] = true;
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SBIC – Skip if Bit in I/O Register is Cleared
+	 * 
+	 * This instruction tests a single bit in an I/O Register and skips the next instruction if the bit is cleared. 
+	 * This instruction operates on the lower 32 I/O Registers – addresses 0-31.
+	 * 
+	 * @param A    0 <= A <= 31
+	 * @param b    0 <= b <= 7
+	 */
+	sbic: function(A, b) {
+
+		/* Operation: If I/O(A,b) = 0 then PC <- PC + 2 (or 3) else PC <- PC + 1  */
+		if (this.io[A][b] === false) {
+			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
+			this.PC += 2;
+		}
+		else {
+			/* Program Counter: PC <- PC + 1, Condition false - no skip */
+			this.PC++;
+		}
+	},
+	/**
+	 * SBIS – Skip if Bit in I/O Register is Set
+	 * 
+	 * This instruction tests a single bit in an I/O Register and skips the next instruction if the bit is set. 
+	 * This instruction operates on the lower 32 I/O Registers – addresses 0-31.
+	 * 
+	 * @param A    0 <= A <= 31
+	 * @param b    0 <= b <= 7
+	 */
+	sbis: function(A, b) {
+
+		/* Operation: If I/O(A,b) = 1 then PC <- PC + 2 (or 3) else PC <- PC + 1  */
+		if (this.io[A][b] === true) {
+			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
+			this.PC += 2;
+		}
+		else {
+			/* Program Counter: PC <- PC + 1, Condition false - no skip */
+			this.PC++;
+		}
+	},
+	/**
+	 * SBIW - SBIW – Subtract Immediate from Word
+	 * 
+	 * Subtracts an immediate value (0-63) from a register pair and places the result in the register pair.
+	 * This instruction operates on the upper four register pairs, 
+	 * and is well suited for operations on the Pointer Registers. 
+	 * This instruction is not available in all devices. 
+	 * Refer to the device specific instruction set summary.
+	 * 
+	 * @param _Rd    Rd e {24,26,28,30}
+	 * @param K      0 <= K <= 63
+	 */
+	sbiw: function(_Rd, K) {
+
+		/* @TODO */
+
+	},
+	/**
+	 * SBR - Set Bits in Register
+	 * 
+	 * Sets specified bits in register Rd.
+	 * Performs the logical ORI between the contents of register Rd and a constant mask K 
+	 * and places the result in the destination register Rd.
+	 * 
+	 * @param {type} _Rd
+	 * @param {type} K
+	 */
+	sbr: function(_Rd, K) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Operation: Rd <- Rd v K */
+		Rd[0] = Rd[0] || K[0];
+		Rd[1] = Rd[1] || K[1];
+		Rd[2] = Rd[2] || K[2];
+		Rd[3] = Rd[3] || K[3];
+		Rd[4] = Rd[4] || K[4];
+		Rd[5] = Rd[5] || K[5];
+		Rd[6] = Rd[6] || K[6];
+		Rd[7] = Rd[7] || K[7];
+
+		/* Z: Set if the result is $00; cleared othervise. */
+		this.reg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		/* N: Set if MSB of the result is set; cleared othervise. */
+		this.reg[2] = Rd[7];
+		/* V: Cleared */
+		this.reg[3] = false;
+		/* S: N ^ V, For signed tests. */
+		this.reg[4] = !!(this.reg[2] ^ this.reg[3]);
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * SBRC – Skip if Bit in Register is Cleared
+	 * 
+	 * This instruction tests a single bit in a register and skips the next instruction if the bit is cleared.
+	 * 
+	 * @param _Rr
+	 * @param b
+	 */
+	sbrc: function(_Rr, b) {
+
+		/* Operation: If Rr(b) = 0 then PC <- PC + 2 (or 3) else PC <- PC + 1 */
+		if (this.reg[_Rr][b] === false) {
+			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
+			this.PC += 2;
+		} else {
+			/* Program Counter: PC <- PC + 1, Condition false - no skip */
+			this.PC++;
+		}
+	},
+	/**
+	 * SBRS – Skip if Bit in Register is Set
+	 * 
+	 * This instruction tests a single bit in a register and skips the next instruction if the bit is set.
+	 * 
+	 * @param _Rr
+	 * @param b
+	 */
+	sbrs: function(_Rr, b) {
+
+		/* Operation: If Rr(b) = 1 then PC <- PC + 2 (or 3) else PC <- PC + 1 */
+		if (this.reg[_Rr][b] === true) {
+			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
+			this.PC += 2;
+		} else {
+			/* Program Counter: PC <- PC + 1, Condition false - no skip */
+			this.PC++;
+		}
+	},
+	/**
+	 * SEC – Set Carry Flag
+	 * 
+	 * Sets the Carry Flag (C) in SREG (Status Register).
+	 */
+	sec: function() {
+
+		/* Operation: C <- 1 */
+		this.sreg[0] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SEH – Set Half Carry Flag 
+	 * 
+	 * Sets the Half Carry (H) in SREG (Status Register).
+	 */
+	seh: function() {
+
+		/* Operation: H <- 1 */
+		this.sreg[5] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SEI – Set Global Interrupt Flag
+	 * 
+	 * Sets the Global Interrupt Flag (I) in SREG (Status Register). 
+	 * The instruction following SEI will be executed before any pending interrupts.
+	 */
+	sei: function() {
+
+		/* Operation: I <- 1 */
+		this.sreg[7] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SEN – Set Negative Flag
+	 * 
+	 * Sets the Negative Flag (N) in SREG (Status Register).
+	 */
+	sen: function() {
+
+		/* Operation: N <- 1 */
+		this.sreg[2] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SER – Set all Bits in Register
+	 * 
+	 * Loads $FF directly to register Rd.
+	 * 
+	 * @param _Rd
+	 */
+	ser: function(_Rd) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Operation: Rd <- $FF */
+		Rd[0] = true;
+		Rd[1] = true;
+		Rd[2] = true;
+		Rd[3] = true;
+		Rd[4] = true;
+		Rd[5] = true;
+		Rd[6] = true;
+		Rd[7] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * SES – Set Signed Flag
+	 * 
+	 * Sets the Signed Flag (S) in SREG (Status Register).
+	 */
+	ses: function() {
+
+		/* Operation: S <- 1 */
+		this.sreg[4] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SET – Set T Flag
+	 * 
+	 * Sets the T Flag in SREG (Status Register)
+	 */
+	set: function() {
+
+		/* Operation: T <- 1 */
+		this.sreg[6] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SEV – Set Overflow Flag
+	 * 
+	 * Sets the Overflow Flag (V) in SREG (Status Register).
+	 */
+	sev: function() {
+
+		/* Operation: V <- 1 */
+		this.sreg[3] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SEZ – Set Zero Flag
+	 * 
+	 * Sets the Zero Flag (Z) in SREG (Status Register).
+	 */
+	sez: function() {
+
+		/* Operation: Z <- 1 */
+		this.sreg[1] = true;
+
+		/* Program counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SLEEP
+	 * 
+	 * This instruction sets the circuit in sleep mode defined by the MCU Control Register
+	 */
+	sleep: function() {
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * SPM – Store Program Memory
+	 * 
+	 */
+	spm: function() {
+		/* @TODO */
+	},
+	/**
+	 * ST (STD) – Store Indirect From Register to Data Space using Index Z
+	 * 
+	 */
+	st: function() {
+		/* @TODO */
+	},
+	/**
+	 * STS – Store Direct to Data Space
+	 * 
+	 * Stores one byte from a Register to the data space. 
+	 * For parts with SRAM, the data space consists of the Register File, I/O memory and internal SRAM 
+	 * (and external SRAM if applicable).
+	 * For parts without SRAM, the data space consists of the Register File only. 
+	 * The EEPROM has a separate address space.
+	 * 
+	 * A 16-bit address must be supplied. 
+	 * Memory access is limited to the current data segment of 64K bytes. 
+	 * The STS instruction uses the RAMPD Register to access memory above 64K bytes. 
+	 * To access another data segment in devices with more than 64K bytes data space,
+	 * the RAMPD in register in the I/O area has to be changed.
+	 * 
+	 * This instruction is not available in all devices. Refer to the device specific instruction set summary
+	 * 
+	 * @param k      0 <= k <= 65535
+	 * @param _Rr    16 <= r <= 31
+	 */
+	sts: function(k, _Rr) {
+
+		this.memory[k] = this.reg[_Rr];
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 2 */
+		this.PC += 2;
+	},
+	/**
+	 * SUB – Subtract without Carry
+	 * 
+	 * Subtracts two registers and places the result in the destination register Rd
+	 * 
+	 * @param _Rd
+	 * @param _Rr
+	 */
+	sub: function(_Rd, _Rr) {
+
+		/* @TODO */
+	},
+	/**
+	 * SUBI – Subtract Immediate
+	 * 
+	 * Subtracts a register and a constant and places the result in the destination register Rd. 
+	 * This instruction is working on Register R16 to R31 
+	 * and is very well suited for operations on the X, Y and Z-pointers
+	 * 
+	 * @param _Rd
+	 * @param K
+	 */
+	subi: function(_Rd, K) {
+
+		/* @TODO */
+
+	},
+	/**
+	 * SWAP – Swap Nibbles
+	 * 
+	 * Swaps high and low nibbles in a register
+	 * 
+	 * @param _Rd
+	 */
 	swap: function(_Rd) {
 
 		var Rd = this.reg[_Rd];
