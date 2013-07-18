@@ -1,5 +1,5 @@
 "use strict";
-var atmega328 = {
+var avr = {
 	/** Program counter */
 	PC: 0,
 	/** Stack pointer */
