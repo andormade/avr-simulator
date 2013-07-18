@@ -1654,6 +1654,9 @@ var avr = {
 	 */
 	spm: function() {
 		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
 	},
 	/**
 	 * ST (STD) – Store Indirect From Register to Data Space using Index Z
@@ -1661,6 +1664,9 @@ var avr = {
 	 */
 	st: function() {
 		/* @TODO */
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
 	},
 	/**
 	 * STS – Store Direct to Data Space
@@ -1702,6 +1708,9 @@ var avr = {
 	sub: function(_Rd, _Rr) {
 
 		/* @TODO */
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
 	},
 	/**
 	 * SUBI – Subtract Immediate
@@ -1716,7 +1725,9 @@ var avr = {
 	subi: function(_Rd, K) {
 
 		/* @TODO */
-
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
 	},
 	/**
 	 * SWAP – Swap Nibbles
@@ -1792,7 +1803,8 @@ var avr = {
 		/* @TODO */
 
 		/* Operation: WD timer restart. */
-
+		
+		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	}
 };
