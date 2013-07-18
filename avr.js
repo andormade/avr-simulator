@@ -1171,6 +1171,64 @@ var atmega328 = {
 		/* Save changes */
 		this.reg[_Rd] = Rd;
 	},
+	swap: function(_Rd) {
+		
+		var Rd = this.reg[_Rd];
+		var R = [false, false, false, false, false, false, false, false];
+		
+		/* Operation: R(7:4) <- Rd(3:0), R(3:0) <- Rd(7:4) */
+		R[7] = Rd[3];
+		R[6] = Rd[2];
+		R[5] = Rd[1];
+		R[4] = Rd[0];
+		
+		R[3] = Rd[7];
+		R[2] = Rd[6];
+		R[1] = Rd[5];
+		R[0] = Rd[0];
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+		
+		this.reg[_Rd] = R;
+	},
+	/**
+	 * TST - Test for Zero or Minus
+	 * 
+	 * Tests if a register is zero or negative. 
+	 * Performs a logical AND between a register and itself. 
+	 * The register will remain unchanged.
+	 * 
+	 * @param _Rd
+	 */
+	tst: function(_Rd) {
+
+		var Rd = this.reg[_Rd];
+		
+		/* Operation: Rd <- Rd && Rd */
+		Rd[0] = Rd[0] && Rd[0];
+		Rd[1] = Rd[1] && Rd[1];
+		Rd[2] = Rd[2] && Rd[2];
+		Rd[3] = Rd[3] && Rd[3];
+		Rd[4] = Rd[4] && Rd[4];
+		Rd[5] = Rd[5] && Rd[5];
+		Rd[6] = Rd[6] && Rd[6];
+		Rd[7] = Rd[7] && Rd[7];
+		
+		/* Z: Set if the result is $00; cleared otherwise. */
+		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+		/* N: Set if MSB of the result is set; cleared otherwis. */
+		this.sreg[2] = Rd[7];
+		/* V: Cleared */
+		this.sreg[3] = false;
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;		
+	}
 	/**
 	 * This instruction resets the Watchdog Timer. 
 	 * This instruction must be executed within a limited time given by the WD prescaler. 
