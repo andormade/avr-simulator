@@ -1185,7 +1185,7 @@ var atmega328 = {
 		R[3] = Rd[7];
 		R[2] = Rd[6];
 		R[1] = Rd[5];
-		R[0] = Rd[0];
+		R[0] = Rd[4];
 		
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1228,7 +1228,7 @@ var atmega328 = {
 		this.PC++;
 
 		this.reg[_Rd] = Rd;		
-	}
+	},
 	/**
 	 * This instruction resets the Watchdog Timer. 
 	 * This instruction must be executed within a limited time given by the WD prescaler. 
