@@ -50,56 +50,331 @@ var avr = {
 		1: false, /* Z - Zero flag */
 		0: false /*  C - Carry flag */
 	},
-	/* Register space */
+	/**
+	 * General Purpose Register File
+	 * 
+	 *     0       1       2       3       4       5       6       7
+	 * .-------.-------.-------.-------.-------.-------.-------.-------.
+	 * |  LSB  |       |       |       |       |       |       |  MSB  |
+	 * '-------'-------'-------'-------'-------'-------'-------'-------'
+	 */
 	reg: {
-		/*       MSB                                                                  LSB */
-		r0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r1: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r2: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r3: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r4: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r5: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r6: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r7: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r8: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r9: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r10: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r11: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r12: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r13: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r14: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r15: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		/*       MSB                                                                   LSB */
-		r16: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r17: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r18: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r19: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r20: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r21: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r22: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r23: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r24: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r25: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r26: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r27: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r28: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r29: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r30: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		r31: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
+		/*    MSB                                              LSB        Data Memory Address */
+		r0: [false, false, false, false, false, false, false, false], /*  0x00    R0  */
+		r1: [false, false, false, false, false, false, false, false], /*  0x01    R1  */
+		r2: [false, false, false, false, false, false, false, false], /*  0x02    R2  */
+		r3: [false, false, false, false, false, false, false, false], /*  0x03    R3  */
+		r4: [false, false, false, false, false, false, false, false], /*  0x04    R4  */
+		r5: [false, false, false, false, false, false, false, false], /*  0x05    R5  */
+		r6: [false, false, false, false, false, false, false, false], /*  0x06    R6  */
+		r7: [false, false, false, false, false, false, false, false], /*  0x07    R7  */
+		r8: [false, false, false, false, false, false, false, false], /*  0x08    R8  */
+		r9: [false, false, false, false, false, false, false, false], /*  0x09    R9  */
+		r10: [false, false, false, false, false, false, false, false], /* 0x0A    R10 */
+		r11: [false, false, false, false, false, false, false, false], /* 0x0B    R11 */
+		r12: [false, false, false, false, false, false, false, false], /* 0x0C    R12 */
+		r13: [false, false, false, false, false, false, false, false], /* 0x0D    R13 */
+		r14: [false, false, false, false, false, false, false, false], /* 0x0E    R14 */
+		r15: [false, false, false, false, false, false, false, false], /* 0x0F    R15 */
+
+		r16: [false, false, false, false, false, false, false, false], /* 0x10    R16 */
+		r17: [false, false, false, false, false, false, false, false], /* 0x11    R17 */
+		r18: [false, false, false, false, false, false, false, false], /* 0x12    R18 */
+		r19: [false, false, false, false, false, false, false, false], /* 0x13    R19 */
+		r20: [false, false, false, false, false, false, false, false], /* 0x14    R20 */
+		r21: [false, false, false, false, false, false, false, false], /* 0x15    R21 */
+		r22: [false, false, false, false, false, false, false, false], /* 0x16    R22 */
+		r23: [false, false, false, false, false, false, false, false], /* 0x17    R23 */
+		r24: [false, false, false, false, false, false, false, false], /* 0x18    R24 */
+		r25: [false, false, false, false, false, false, false, false], /* 0x19    R25 */
+		r26: [false, false, false, false, false, false, false, false], /* 0x1A    R26    X-register Low Byte */
+		r27: [false, false, false, false, false, false, false, false], /* 0x1B    R27    X-register High Byte */
+		r28: [false, false, false, false, false, false, false, false], /* 0x1C    R28    Y-register Low Byte */
+		r29: [false, false, false, false, false, false, false, false], /* 0x1D    R29    Y-register High Byte */
+		r30: [false, false, false, false, false, false, false, false], /* 0x1E    R30    Z-register Low Byte */
+		r31: [false, false, false, false, false, false, false, false] /*  0x1F    R31    Z-register High Byte */
 	},
-	io: {
-	},
-	stack: {
-		0: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		1: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		2: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		3: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		4: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		5: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		6: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false},
-		7: {7: false, 6: false, 5: false, 4: false, 3: false, 2: false, 1: false, 0: false}
-	},
-	memory: [],
+	/**
+	 * Register Space    0x00 - 0xFF
+	 * 
+	 *     0       1       2       3       4       5       6       7
+	 * .-------.-------.-------.-------.-------.-------.-------.-------.
+	 * |  LSB  |       |       |       |       |       |       |  MSB  |
+	 * '-------'-------'-------'-------'-------'-------'-------'-------'
+	 */
+	databus: [
+		[false, false, false, false, false, false, false, false], /* 0x00 */
+		[false, false, false, false, false, false, false, false], /* 0x01 */
+		[false, false, false, false, false, false, false, false], /* 0x02 */
+		[false, false, false, false, false, false, false, false], /* 0x03 */
+		[false, false, false, false, false, false, false, false], /* 0x04 */
+		[false, false, false, false, false, false, false, false], /* 0x05 */
+		[false, false, false, false, false, false, false, false], /* 0x06 */
+		[false, false, false, false, false, false, false, false], /* 0x07 */
+		[false, false, false, false, false, false, false, false], /* 0x08 */
+		[false, false, false, false, false, false, false, false], /* 0x09 */
+		[false, false, false, false, false, false, false, false], /* 0x0A */
+		[false, false, false, false, false, false, false, false], /* 0x0B */
+		[false, false, false, false, false, false, false, false], /* 0x0C */
+		[false, false, false, false, false, false, false, false], /* 0x0D */
+		[false, false, false, false, false, false, false, false], /* 0x0E */
+		[false, false, false, false, false, false, false, false], /* 0x0F */
+
+		[false, false, false, false, false, false, false, false], /* 0x10 */
+		[false, false, false, false, false, false, false, false], /* 0x11 */
+		[false, false, false, false, false, false, false, false], /* 0x12 */
+		[false, false, false, false, false, false, false, false], /* 0x13 */
+		[false, false, false, false, false, false, false, false], /* 0x14 */
+		[false, false, false, false, false, false, false, false], /* 0x15 */
+		[false, false, false, false, false, false, false, false], /* 0x16 */
+		[false, false, false, false, false, false, false, false], /* 0x17 */
+		[false, false, false, false, false, false, false, false], /* 0x18 */
+		[false, false, false, false, false, false, false, false], /* 0x19 */
+		[false, false, false, false, false, false, false, false], /* 0x1A */
+		[false, false, false, false, false, false, false, false], /* 0x1B */
+		[false, false, false, false, false, false, false, false], /* 0x1C */
+		[false, false, false, false, false, false, false, false], /* 0x1D */
+		[false, false, false, false, false, false, false, false], /* 0x1E */
+		[false, false, false, false, false, false, false, false], /* 0x1F */
+
+		[false, false, false, false, false, false, false, false], /* 0x20 */
+		[false, false, false, false, false, false, false, false], /* 0x21 */
+		[false, false, false, false, false, false, false, false], /* 0x22 */
+		[false, false, false, false, false, false, false, false], /* 0x23 */
+		[false, false, false, false, false, false, false, false], /* 0x24 */
+		[false, false, false, false, false, false, false, false], /* 0x25 */
+		[false, false, false, false, false, false, false, false], /* 0x26 */
+		[false, false, false, false, false, false, false, false], /* 0x27 */
+		[false, false, false, false, false, false, false, false], /* 0x28 */
+		[false, false, false, false, false, false, false, false], /* 0x29 */
+		[false, false, false, false, false, false, false, false], /* 0x2A */
+		[false, false, false, false, false, false, false, false], /* 0x2B */
+		[false, false, false, false, false, false, false, false], /* 0x2C */
+		[false, false, false, false, false, false, false, false], /* 0x2D */
+		[false, false, false, false, false, false, false, false], /* 0x2E */
+		[false, false, false, false, false, false, false, false], /* 0x2F */
+
+		[false, false, false, false, false, false, false, false], /* 0x30 */
+		[false, false, false, false, false, false, false, false], /* 0x31 */
+		[false, false, false, false, false, false, false, false], /* 0x32 */
+		[false, false, false, false, false, false, false, false], /* 0x33 */
+		[false, false, false, false, false, false, false, false], /* 0x34 */
+		[false, false, false, false, false, false, false, false], /* 0x35 */
+		[false, false, false, false, false, false, false, false], /* 0x36 */
+		[false, false, false, false, false, false, false, false], /* 0x37 */
+		[false, false, false, false, false, false, false, false], /* 0x38 */
+		[false, false, false, false, false, false, false, false], /* 0x39 */
+		[false, false, false, false, false, false, false, false], /* 0x3A */
+		[false, false, false, false, false, false, false, false], /* 0x3B */
+		[false, false, false, false, false, false, false, false], /* 0x3C */
+		[false, false, false, false, false, false, false, false], /* 0x3D */
+		[false, false, false, false, false, false, false, false], /* 0x3E */
+		[false, false, false, false, false, false, false, false], /* 0x3F */
+
+		[false, false, false, false, false, false, false, false], /* 0x40 */
+		[false, false, false, false, false, false, false, false], /* 0x41 */
+		[false, false, false, false, false, false, false, false], /* 0x42 */
+		[false, false, false, false, false, false, false, false], /* 0x43 */
+		[false, false, false, false, false, false, false, false], /* 0x44 */
+		[false, false, false, false, false, false, false, false], /* 0x45 */
+		[false, false, false, false, false, false, false, false], /* 0x46 */
+		[false, false, false, false, false, false, false, false], /* 0x47 */
+		[false, false, false, false, false, false, false, false], /* 0x48 */
+		[false, false, false, false, false, false, false, false], /* 0x49 */
+		[false, false, false, false, false, false, false, false], /* 0x4A */
+		[false, false, false, false, false, false, false, false], /* 0x4B */
+		[false, false, false, false, false, false, false, false], /* 0x4C */
+		[false, false, false, false, false, false, false, false], /* 0x4D */
+		[false, false, false, false, false, false, false, false], /* 0x4E */
+		[false, false, false, false, false, false, false, false], /* 0x4F */
+
+		[false, false, false, false, false, false, false, false], /* 0x50 */
+		[false, false, false, false, false, false, false, false], /* 0x51 */
+		[false, false, false, false, false, false, false, false], /* 0x52 */
+		[false, false, false, false, false, false, false, false], /* 0x53 */
+		[false, false, false, false, false, false, false, false], /* 0x54 */
+		[false, false, false, false, false, false, false, false], /* 0x55 */
+		[false, false, false, false, false, false, false, false], /* 0x56 */
+		[false, false, false, false, false, false, false, false], /* 0x57 */
+		[false, false, false, false, false, false, false, false], /* 0x58 */
+		[false, false, false, false, false, false, false, false], /* 0x59 */
+		[false, false, false, false, false, false, false, false], /* 0x5A */
+		[false, false, false, false, false, false, false, false], /* 0x5B */
+		[false, false, false, false, false, false, false, false], /* 0x5C */
+		[false, false, false, false, false, false, false, false], /* 0x5D */
+		[false, false, false, false, false, false, false, false], /* 0x5E */
+		[false, false, false, false, false, false, false, false], /* 0x5F */
+
+		[false, false, false, false, false, false, false, false], /* 0x60 */
+		[false, false, false, false, false, false, false, false], /* 0x61 */
+		[false, false, false, false, false, false, false, false], /* 0x62 */
+		[false, false, false, false, false, false, false, false], /* 0x63 */
+		[false, false, false, false, false, false, false, false], /* 0x64 */
+		[false, false, false, false, false, false, false, false], /* 0x65 */
+		[false, false, false, false, false, false, false, false], /* 0x66 */
+		[false, false, false, false, false, false, false, false], /* 0x67 */
+		[false, false, false, false, false, false, false, false], /* 0x68 */
+		[false, false, false, false, false, false, false, false], /* 0x69 */
+		[false, false, false, false, false, false, false, false], /* 0x6A */
+		[false, false, false, false, false, false, false, false], /* 0x6B */
+		[false, false, false, false, false, false, false, false], /* 0x6C */
+		[false, false, false, false, false, false, false, false], /* 0x6D */
+		[false, false, false, false, false, false, false, false], /* 0x6E */
+		[false, false, false, false, false, false, false, false], /* 0x6F */
+
+		[false, false, false, false, false, false, false, false], /* 0x70 */
+		[false, false, false, false, false, false, false, false], /* 0x71 */
+		[false, false, false, false, false, false, false, false], /* 0x72 */
+		[false, false, false, false, false, false, false, false], /* 0x73 */
+		[false, false, false, false, false, false, false, false], /* 0x74 */
+		[false, false, false, false, false, false, false, false], /* 0x75 */
+		[false, false, false, false, false, false, false, false], /* 0x76 */
+		[false, false, false, false, false, false, false, false], /* 0x77 */
+		[false, false, false, false, false, false, false, false], /* 0x78 */
+		[false, false, false, false, false, false, false, false], /* 0x79 */
+		[false, false, false, false, false, false, false, false], /* 0x7A */
+		[false, false, false, false, false, false, false, false], /* 0x7B */
+		[false, false, false, false, false, false, false, false], /* 0x7C */
+		[false, false, false, false, false, false, false, false], /* 0x7D */
+		[false, false, false, false, false, false, false, false], /* 0x7E */
+		[false, false, false, false, false, false, false, false], /* 0x7F */
+
+		[false, false, false, false, false, false, false, false], /* 0x80 */
+		[false, false, false, false, false, false, false, false], /* 0x81 */
+		[false, false, false, false, false, false, false, false], /* 0x82 */
+		[false, false, false, false, false, false, false, false], /* 0x83 */
+		[false, false, false, false, false, false, false, false], /* 0x84 */
+		[false, false, false, false, false, false, false, false], /* 0x85 */
+		[false, false, false, false, false, false, false, false], /* 0x86 */
+		[false, false, false, false, false, false, false, false], /* 0x87 */
+		[false, false, false, false, false, false, false, false], /* 0x88 */
+		[false, false, false, false, false, false, false, false], /* 0x89 */
+		[false, false, false, false, false, false, false, false], /* 0x8A */
+		[false, false, false, false, false, false, false, false], /* 0x8B */
+		[false, false, false, false, false, false, false, false], /* 0x8C */
+		[false, false, false, false, false, false, false, false], /* 0x8D */
+		[false, false, false, false, false, false, false, false], /* 0x8E */
+		[false, false, false, false, false, false, false, false], /* 0x8F */
+
+		[false, false, false, false, false, false, false, false], /* 0x90 */
+		[false, false, false, false, false, false, false, false], /* 0x91 */
+		[false, false, false, false, false, false, false, false], /* 0x92 */
+		[false, false, false, false, false, false, false, false], /* 0x93 */
+		[false, false, false, false, false, false, false, false], /* 0x94 */
+		[false, false, false, false, false, false, false, false], /* 0x95 */
+		[false, false, false, false, false, false, false, false], /* 0x96 */
+		[false, false, false, false, false, false, false, false], /* 0x97 */
+		[false, false, false, false, false, false, false, false], /* 0x98 */
+		[false, false, false, false, false, false, false, false], /* 0x99 */
+		[false, false, false, false, false, false, false, false], /* 0x9A */
+		[false, false, false, false, false, false, false, false], /* 0x9B */
+		[false, false, false, false, false, false, false, false], /* 0x9C */
+		[false, false, false, false, false, false, false, false], /* 0x9D */
+		[false, false, false, false, false, false, false, false], /* 0x9E */
+		[false, false, false, false, false, false, false, false], /* 0x9F */
+
+		[false, false, false, false, false, false, false, false], /* 0xA0 */
+		[false, false, false, false, false, false, false, false], /* 0xA1 */
+		[false, false, false, false, false, false, false, false], /* 0xA2 */
+		[false, false, false, false, false, false, false, false], /* 0xA3 */
+		[false, false, false, false, false, false, false, false], /* 0xA4 */
+		[false, false, false, false, false, false, false, false], /* 0xA5 */
+		[false, false, false, false, false, false, false, false], /* 0xA6 */
+		[false, false, false, false, false, false, false, false], /* 0xA7 */
+		[false, false, false, false, false, false, false, false], /* 0xA8 */
+		[false, false, false, false, false, false, false, false], /* 0xA9 */
+		[false, false, false, false, false, false, false, false], /* 0xAA */
+		[false, false, false, false, false, false, false, false], /* 0xAB */
+		[false, false, false, false, false, false, false, false], /* 0xAC */
+		[false, false, false, false, false, false, false, false], /* 0xAD */
+		[false, false, false, false, false, false, false, false], /* 0xAE */
+		[false, false, false, false, false, false, false, false], /* 0xAF */
+
+		[false, false, false, false, false, false, false, false], /* 0xB0 */
+		[false, false, false, false, false, false, false, false], /* 0xB1 */
+		[false, false, false, false, false, false, false, false], /* 0xB2 */
+		[false, false, false, false, false, false, false, false], /* 0xB3 */
+		[false, false, false, false, false, false, false, false], /* 0xB4 */
+		[false, false, false, false, false, false, false, false], /* 0xB5 */
+		[false, false, false, false, false, false, false, false], /* 0xB6 */
+		[false, false, false, false, false, false, false, false], /* 0xB7 */
+		[false, false, false, false, false, false, false, false], /* 0xB8 */
+		[false, false, false, false, false, false, false, false], /* 0xB9 */
+		[false, false, false, false, false, false, false, false], /* 0xBA */
+		[false, false, false, false, false, false, false, false], /* 0xBB */
+		[false, false, false, false, false, false, false, false], /* 0xBC */
+		[false, false, false, false, false, false, false, false], /* 0xBD */
+		[false, false, false, false, false, false, false, false], /* 0xBE */
+		[false, false, false, false, false, false, false, false], /* 0xBF */
+
+		[false, false, false, false, false, false, false, false], /* 0xC0 */
+		[false, false, false, false, false, false, false, false], /* 0xC1 */
+		[false, false, false, false, false, false, false, false], /* 0xC2 */
+		[false, false, false, false, false, false, false, false], /* 0xC3 */
+		[false, false, false, false, false, false, false, false], /* 0xC4 */
+		[false, false, false, false, false, false, false, false], /* 0xC5 */
+		[false, false, false, false, false, false, false, false], /* 0xC6 */
+		[false, false, false, false, false, false, false, false], /* 0xC7 */
+		[false, false, false, false, false, false, false, false], /* 0xC8 */
+		[false, false, false, false, false, false, false, false], /* 0xC9 */
+		[false, false, false, false, false, false, false, false], /* 0xCA */
+		[false, false, false, false, false, false, false, false], /* 0xCB */
+		[false, false, false, false, false, false, false, false], /* 0xCC */
+		[false, false, false, false, false, false, false, false], /* 0xCD */
+		[false, false, false, false, false, false, false, false], /* 0xCE */
+		[false, false, false, false, false, false, false, false], /* 0xCF */
+
+		[false, false, false, false, false, false, false, false], /* 0xD0 */
+		[false, false, false, false, false, false, false, false], /* 0xD1 */
+		[false, false, false, false, false, false, false, false], /* 0xD2 */
+		[false, false, false, false, false, false, false, false], /* 0xD3 */
+		[false, false, false, false, false, false, false, false], /* 0xD4 */
+		[false, false, false, false, false, false, false, false], /* 0xD5 */
+		[false, false, false, false, false, false, false, false], /* 0xD6 */
+		[false, false, false, false, false, false, false, false], /* 0xD7 */
+		[false, false, false, false, false, false, false, false], /* 0xD8 */
+		[false, false, false, false, false, false, false, false], /* 0xD9 */
+		[false, false, false, false, false, false, false, false], /* 0xDA */
+		[false, false, false, false, false, false, false, false], /* 0xDB */
+		[false, false, false, false, false, false, false, false], /* 0xDC */
+		[false, false, false, false, false, false, false, false], /* 0xDD */
+		[false, false, false, false, false, false, false, false], /* 0xDE */
+		[false, false, false, false, false, false, false, false], /* 0xDF */
+
+		[false, false, false, false, false, false, false, false], /* 0xE0 */
+		[false, false, false, false, false, false, false, false], /* 0xE1 */
+		[false, false, false, false, false, false, false, false], /* 0xE2 */
+		[false, false, false, false, false, false, false, false], /* 0xE3 */
+		[false, false, false, false, false, false, false, false], /* 0xE4 */
+		[false, false, false, false, false, false, false, false], /* 0xE5 */
+		[false, false, false, false, false, false, false, false], /* 0xE6 */
+		[false, false, false, false, false, false, false, false], /* 0xE7 */
+		[false, false, false, false, false, false, false, false], /* 0xE8 */
+		[false, false, false, false, false, false, false, false], /* 0xE9 */
+		[false, false, false, false, false, false, false, false], /* 0xEA */
+		[false, false, false, false, false, false, false, false], /* 0xEB */
+		[false, false, false, false, false, false, false, false], /* 0xEC */
+		[false, false, false, false, false, false, false, false], /* 0xED */
+		[false, false, false, false, false, false, false, false], /* 0xEE */
+		[false, false, false, false, false, false, false, false], /* 0xEF */
+
+		[false, false, false, false, false, false, false, false], /* 0xF0 */
+		[false, false, false, false, false, false, false, false], /* 0xF1 */
+		[false, false, false, false, false, false, false, false], /* 0xF2 */
+		[false, false, false, false, false, false, false, false], /* 0xF3 */
+		[false, false, false, false, false, false, false, false], /* 0xF4 */
+		[false, false, false, false, false, false, false, false], /* 0xF5 */
+		[false, false, false, false, false, false, false, false], /* 0xF6 */
+		[false, false, false, false, false, false, false, false], /* 0xF7 */
+		[false, false, false, false, false, false, false, false], /* 0xF8 */
+		[false, false, false, false, false, false, false, false], /* 0xF9 */
+		[false, false, false, false, false, false, false, false], /* 0xFA */
+		[false, false, false, false, false, false, false, false], /* 0xFB */
+		[false, false, false, false, false, false, false, false], /* 0xFC */
+		[false, false, false, false, false, false, false, false], /* 0xFD */
+		[false, false, false, false, false, false, false, false], /* 0xFE */
+		[false, false, false, false, false, false, false, false] /*  0xFF */
+	],
 	/**
 	 * AND – Logical AND
 	 * 
@@ -131,7 +406,7 @@ var avr = {
 		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
@@ -206,7 +481,7 @@ var avr = {
 		if (this.sreg[s] === false) {
 			this.PC = this.PC + k;
 		}
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1033,28 +1308,28 @@ var avr = {
 	},
 	mul: function() {
 		/* @TODO */
-		
-		
+
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	muls: function() {
 		/* @TODO */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	mulsu: function() {
 
 		/* @TODO */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
 	neg: function() {
-		
+
 		/* @TODO */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1170,7 +1445,7 @@ var avr = {
 
 		/* Rd <- STACK */
 		this.reg[_Rd] = this.stack[this.SP];
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1195,9 +1470,9 @@ var avr = {
 	rcall: function() {
 
 		/* @TODO */
-		
-				
-		
+
+
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1209,7 +1484,7 @@ var avr = {
 		this.PC++;
 	},
 	reti: function() {
-	
+
 		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
@@ -1327,7 +1602,7 @@ var avr = {
 	 * @param _Rr
 	 */
 	sbc: function(_Rd, _Rr) {
-		
+
 		/* Operation: Rd <- Rd - Rr - C */
 
 		/* @TODO */
@@ -1664,7 +1939,7 @@ var avr = {
 	 */
 	st: function() {
 		/* @TODO */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1708,7 +1983,7 @@ var avr = {
 	sub: function(_Rd, _Rr) {
 
 		/* @TODO */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1725,7 +2000,7 @@ var avr = {
 	subi: function(_Rd, K) {
 
 		/* @TODO */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -1803,7 +2078,7 @@ var avr = {
 		/* @TODO */
 
 		/* Operation: WD timer restart. */
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	}
