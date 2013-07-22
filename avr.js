@@ -376,6 +376,65 @@ var avr = {
 		[false, false, false, false, false, false, false, false] /*  0xFF */
 	],
 	/**
+	 * ADC – Add with Carry
+	 * 
+	 * Adds two registers and the contents of the C Flag and places the result in the destination register Rd.
+	 * 
+	 * @param _Rd    0 < d < 31
+	 * @param _Rr    0 < r < 31
+	 */	
+	adc: function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+		var R = [false, false, false, false, false, false, false, false];
+		var C = [false, false, false, false, false, false, false, false];
+		
+		/* Operation: Rd <- Rd + Rr + C */
+		C[0] = this.sreg[0];
+		
+		R[0] = !!(Rd[0] ^ Rr[0]);
+		C[1] = Rd[0] && Rr[0];
+		
+		R[1] = !!(Rd[1] ^ Rr[1] ^ C[1]);
+		C[2] = (Rd[1] || Rr[1]) && C[1];
+		
+		R[2] = !!(Rd[2] ^ Rr[2] ^ C[2]);
+		C[3] = (Rd[2] || Rr[2]) && C[2];
+		
+		R[3] = !!(Rd[3] ^ Rr[3] ^ C[3]);
+		C[4] = (Rd[3] || Rr[3]) && C[3];
+		
+		R[4] = !!(Rd[4] ^ Rr[4] ^ C[4]);
+		C[5] = (Rd[4] || Rr[4]) && C[4];
+
+		R[5] = !!(Rd[5] ^ Rr[5] ^ C[5]);
+		C[6] = (Rd[5] || Rr[5]) && C[5];
+		
+		R[6] = !!(Rd[6] ^ Rr[6] ^ C[6]);
+		C[7] = (Rd[6] || Rr[6]) && C[6];
+		
+		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
+		
+		/* C: Set if there was carry from the MSB of the result; cleared otherwise. */
+		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] &&Rd[7];
+		/* Z: Set if the result is $00; cleared otherwise. */
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		/* N: Set if MSB of the result is set; cleared otherwise. */
+		this.sreg[2] = R[7];
+		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
+		this.sreg[3] = Rd[7] && Rr[7] && !Rr[7] || !Rd[7] && !Rr[7] && R[7];
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		/* H: Set if there was a carry from bit 3; cleared otherwise. */
+		this.sreg[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+		
+		this.reg[_Rd] = R;
+	},
+	/**
 	 * ADD – Add without Carry
 	 * 
 	 * Adds two registers without the C Flag and places the result in the destination register Rd
