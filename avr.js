@@ -2157,10 +2157,46 @@ var avr = {
 	 */
 	sub: function(_Rd, _Rr) {
 
+		
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+		var C = [false, false, false, false, false, false, false, false];
+		var R = [false, false, false, false, false, false, false, false];
+		
+		/* Operation Rd <- Rd + Rr */
+		C[0] = false;
+		
+		R[0] = !!(Rd[0] ^ Rr[0]);
+		C[1] = !Rd[0] && Rr[0];
+		
+		R[1] = !!(Rd[1] ^ Rr[1] ^ C[1]);
+		C[2] = C[1] && !!(Rd[1] ^ Rr[1]) || (!Rd[1] && Rr[1]);
+		
+		R[2] = !!(Rd[2] ^ Rr[2] ^ C[2]);
+		C[3] = C[2] && !!(Rd[2] ^ Rr[2]) || (!Rd[2] && Rr[2]);
+		
+		R[3] = !!(Rd[3] ^ Rr[3] ^ C[3]);
+		C[4] = C[3] && !!(Rd[3] ^ Rr[3]) || (!Rd[3] && Rr[3]);
+		
+		R[4] = !!(Rd[4] ^ Rr[4] ^ C[4]);
+		C[5] = C[4] && !!(Rd[4] ^ Rr[4]) || (!Rd[4] && Rr[4]);
+		
+		R[5] = !!(Rd[5] ^ Rr[5] ^ C[5]);
+		C[6] = C[5] && !!(Rd[5] ^ Rr[5]) || (!Rd[5] && Rr[5]);
+		
+		R[6] = !!(Rd[6] ^ Rr[6] ^ C[6]);
+		C[7] = C[6] && !!(Rd[6] ^ Rr[6]) || (!Rd[6] && Rr[6]);
+		
+		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
+		
+		/* C: */
+		this.sreg[0] = C[7] && !!(Rd[7] ^ Rr[7]) || (!Rd[7] && Rr[7]);
 		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
+		
+		this.reg[_Rd] = R;
 	},
 	/**
 	 * SUBI – Subtract Immediate
