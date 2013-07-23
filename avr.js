@@ -1244,6 +1244,63 @@ var avr = {
 		this.reg[_Rd] = Rd;
 	},
 	/**
+	 * INC – Increment
+	 * 
+	 * Adds one -1- to the contents of register Rd and places the result in the destination register Rd. 
+	 * The C Flag in SREG is not affected by the operation, 
+	 * thus allowing the INC instruction to be used on a loop counter in multiple-precision computations. 
+	 * When operating on unsigned numbers, only BREQ and BRNE branches can be expected to perform consistently. 
+	 * When operating on two’s complement values, all signed branches are available.
+	 * 
+	 * @param _Rd    0 <= d <= 31
+	 */
+	inc: function(_Rd) {
+
+		var Rd = this.reg[_Rd];
+		var R = [false, false, false, false, false, false, false, false];
+		var C = [false, false, false, false, false, false, false, false];
+		
+		/* Operation: Rd <- Rd + Rr */
+		C[0] = false;
+		
+		R[0] = !Rd[0];
+		C[1] = Rd[0];
+		
+		R[1] = !!(Rd[1] ^ C[1]);
+		C[2] = Rd[1] && C[1];
+		
+		R[2] = !!(Rd[2] ^ C[2]);
+		C[3] = Rd[2] && C[2];
+		
+		R[3] = !!(Rd[3] ^ C[3]);
+		C[4] = Rd[3] && C[3];
+		
+		R[4] = !!(Rd[4] ^ C[4]);
+		C[5] = Rd[4] && C[4];
+
+		R[5] = !!(Rd[5] ^ C[5]);
+		C[6] = Rd[5] && C[5];
+		
+		R[6] = !!(Rd[6] ^ C[6]);
+		C[7] = Rd[6] && C[6];
+		
+		R[7] = !!(Rd[7] ^ C[7]);
+		
+		/* Z: Set if the result is $00; cleared otherwise. */
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		/* N: Set if MSB of the result is set; cleared otherwise. */
+		this.sreg[2] = R[7];
+		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
+		this.sreg[3] = R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && !R[0];
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+		
+		this.reg[_Rd] = R;
+	},
+	/**
 	 * JMP – Jump
 	 * 
 	 * Jump to an address within the entire 4M (words) Program memory. 
