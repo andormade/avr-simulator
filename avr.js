@@ -494,6 +494,26 @@ var avr = {
 		this.reg[_Rd] = R;
 	},
 	/**
+	 * ADIW – Add Immediate to Word
+	 *
+	 * Adds an immediate value (0 - 63) to a register pair and places the result in the register pair.
+	 * This instruction operates on the upper four register pairs,
+	 * and is well suited for operations on the pointer registers.
+	 * This instruction is not available in all devices. 
+	 * Refer to the device specific instruction set summary.
+	 *
+	 * @param _Rd    d e {24,26,28,30}
+	 * @param _Rr    0 <= K <= 63
+	 */
+	adiw: function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
 	 * AND – Logical AND
 	 * 
 	 * Performs the logical AND between the contents of register Rd and register Rr 
@@ -567,6 +587,48 @@ var avr = {
 
 		this.reg[_Rd] = Rd;
 	},
+	/**
+	 * ASR – Arithmetic Shift Right
+	 *
+	 * Shifts all bits in Rd one place to the right. Bit 7 is held constant.
+	 * Bit 0 is loaded into the C Flag of the SREG. 
+	 * This operation effectively divides a signed value by two without changing its sign.
+	 * The Carry Flag can be used to round the result.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 */
+	asr: function(_Rd) {
+
+		/* C: Set if, before the shift, the LSB of RD was set; cleared otherwise. */
+		this.sreg[0] = Rd[0];
+
+		/* Operation */
+		Rd[0] = Rd[1];
+		Rd[1] = Rd[2];
+		Rd[2] = Rd[3];
+		Rd[3] = Rd[4];
+		Rd[4] = Rd[5];
+		Rd[5] = Rd[6];
+		Rd[6] = Rd[7];
+		Rd[7] = Rd[7];
+
+		/* Z: Set if the result is $00; cleared otherwise. */
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
+		/* N: Set if MSB of the result is set; cleared otherwise. */
+		this.sreg[2] = Rd[7];
+
+		/* V: N ^ C (For N and C after the shift) */
+		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
+
+		/* S: N ^ V, For signed test */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
 	/** 
 	 * BCLR – Bit Clear in SREG
 	 * 
@@ -578,6 +640,22 @@ var avr = {
 
 		/* @TODO */
 		this.sreg[s] = false;
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * BLD – Bit Load from the T Flag in SREG to a Bit in Register
+	 *
+	 * Copies the T Flag in the SREG (Status Register) to bit b in register Rd.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 * @param b      0 <= b <= 7
+	 */
+	bld: function(_Rd, b) {
+
+		/* Operation: Rd(b) <- T */
+		this.reg[_Rd] = this.sreg[6];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1066,6 +1144,81 @@ var avr = {
 		this.PC++;
 	},
 	/**
+	 * CALL - Long Call to a Subroutine
+	 *
+	 * Calls to a subroutine within the entire Program memory. 
+	 * The return address (to the instruction after the CALL) will be stored onto the Stack. 
+	 * (See also RCALL). 
+	 * The Stack Pointer uses a post-decrement scheme during CALL.
+	 *
+	 * This instruction is not available in all devices. 
+	 * Refer to the device specific instruction set summary.
+	 *
+	 * @param 0 <= k <= 64K || 4M
+	 */
+	call: function(k) {
+
+		/* Operation: PC <- k */
+		this.PC = k;
+
+		/* @TODO */
+
+
+	},
+	/**
+	 * CBI - Clear Bit in I/O Register
+	 *
+	 * Clears a specified bit in an I/O Register. 
+	 * This instruction operates on the lower 32 I/O Registers – addresses 0-31.
+	 *
+	 * @param A    0 <= A <= 31
+	 * @param b    0 <= b <= 7
+	 */
+	cbi: function(A, b) {
+
+		/* @TODO */
+
+
+	},
+	/**
+	 * CBR – Clear Bits in Register
+	 *
+	 * Clears the specified bits in register Rd. 
+	 * Performs the logical AND between the contents of register Rd and the complement of the constant mask K. 
+	 * The result will be placed in register Rd.
+	 *
+	 * @param Rd    16 <= d <= 31
+	 * @param K      0 <= K <= 255
+	 */
+	cbr: function(_Rd, K) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Operation: Rd <- Rd && ($FF - K) */
+		Rd[0] = Rd[0] && !K[0];
+		Rd[1] = Rd[1] && !K[1];
+		Rd[2] = Rd[2] && !K[2];
+		Rd[3] = Rd[3] && !K[3];
+		Rd[4] = Rd[4] && !K[4];
+		Rd[5] = Rd[5] && !K[5];
+		Rd[6] = Rd[6] && !K[6];
+		Rd[7] = Rd[7] && !K[7];
+
+		/* Z: Set if the result is $00; cleared otherwise */
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
+		/* N: Set if MSB of the result is set; celared otherwise */
+		this.sreg[2] = Rd[7]
+		/* V: Celared */
+		this.sreg[3] = false;
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
 	 * CLC – Clear Carry Flag
 	 * 
 	 * Clears the Carry Flag (C) in SREG (Status Register).
@@ -1206,6 +1359,250 @@ var avr = {
 		this.PC++;
 	},
 	/**
+	 * COM - One's Complement
+	 * 
+	 * This instruction performs a One’s Complement of register Rd.
+	 *
+	 * @param Rd    0 <= d <= 31
+	 */
+	com: function(_Rd) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Operation Rd <- $FF - Rd */
+		Rd[0] = !Rd[0];
+		Rd[1] = !Rd[1];
+		Rd[2] = !Rd[2];
+		Rd[3] = !Rd[3];
+		Rd[4] = !Rd[4];
+		Rd[5] = !Rd[5];
+		Rd[6] = !Rd[6];
+		Rd[7] = !Rd[7];
+
+		/* C: Set */
+		this.sreg[0] = true;
+		/* Z: Set if the result is $00; cleared otherwise */
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
+		/* N: Set if MSB of the result is set; celared otherwise */
+		this.sreg[2] = Rd[7]
+		/* V: Celared */
+		this.sreg[3] = false;
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * CP - Compare
+	 *
+	 * This instruction performs a compare between two registers Rd and Rr. None of the registers are changed.
+	 * All conditional branches can be used after this instruction.
+	 *
+	 * @param Rd    0 <= d <= 31
+	 * @param Rr    0 <= r <= 31
+	 */
+	cp: function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+		var R = [false, false, false, false, false, false, false, false];
+
+		/* Operation: Rd - Rr */
+
+		/* @TODO */
+
+		/* C: Set if the absolute value of the contents of Rr is larger than the absolute value of Rd; cleared otherwise. */
+		this.sreg[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
+		/* Z: Set if the result is $00; cleared otherwise */
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		/* N: Set if MSB of the result is set; cleared otherwise */
+		this.sreg[2] = R[7];
+		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
+		this.sreg[3] = Rd[7] && !Rr[7] && !R[7] || !Rd[7] && Rr[7] && R[7];
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		/* H: Set if there was a borrow from bit 3; cleared otherwise */
+		this.sreg[5] = !Rd[3] && Rr[3] || Rr[3] && R[3] || R[3] && !Rd[3];
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * CPC - Compare with Carry
+	 *
+	 * This instruction performs a compare between two registers Rd and Rr and also takes into account the previous carry. 
+	 * None of the registers are changed. 
+	 * All conditional branches can be used after this instruction.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 * @param _Rr    0 <= r <= 31
+	 */
+	cpc: function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+		var R = [false, false, false, false, false, false, false, false];
+
+		/* Operation: Rd - Rr - C */
+
+
+		/* @TODO */
+
+		/* C: Set if the absolute value of the contents of Rr is larger than the absolute value of Rd; cleared otherwise. */
+		this.sreg[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
+		/* Z: Set if the result is $00; cleared otherwise */
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		/* N: Set if MSB of the result is set; cleared otherwise */
+		this.sreg[2] = R[7];
+		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
+		this.sreg[3] = Rd[7] && !Rr[7] && !R[7] || !Rd[7] && Rr[7] && R[7];
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		/* H: Set if there was a borrow from bit 3; cleared otherwise */
+		this.sreg[5] = !Rd[3] && Rr[3] || Rr[3] && R[3] || R[3] && !Rd[3];
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * CPI - Compare with Immediate
+	 *
+	 * This instruction performs a compare between register Rd and a constant.
+	 * The register is not changed. 
+	 * All conditional branches can be used after this instruction.
+	 *
+	 * @param _Rd    16 <= d <= 31
+	 * @param K      0 <= K <= 255
+	 */
+	cpi: function(_Rd, K) {
+
+		var Rd = this.reg[_Rd];
+
+		/* Operation: Rd - K */
+
+		/* @TODO */
+
+		/* C: Set if the absolute value of K is larger than the absolute value of Rd; cleared otherwise. */
+		this.sreg[0] = !Rd[7] && K[7] || K[7] && R[7] || R[7] && !Rd[7];
+		/* Z: Set if the result is $00; cleared otherwise */
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		/* N: Set if MSB of the result is set; cleared otherwise */
+		this.sreg[2] = R[7];
+		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
+		this.sreg[3] = Rd[7] && !K[7] && !R[7] || !Rd[7] && K[7] && R[7];
+		/* S: N ^ V, For signed tests. */
+		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		/* H: Set if there was a borrow from bit 3; cleared otherwise */
+		this.sreg[5] = !Rd[3] && K[3] || K[3] && R[3] || R[3] && !Rd[3];
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * CPSE - Compare Skip if Equal
+	 *
+	 * This instruction performs a compare between two registers Rd and Rr,
+	 * and skips the next instruction if Rd = Rr.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 * @param _Rr    0 <= r <= 31
+	 */
+	cpse: function(_Rd, _Rr) {
+
+		var Rd = this.reg[_Rd];
+		var Rr = this.reg[_Rr];
+
+		/* Operation if Rd = Rr then PC <- PC + 2 (or 3) else PC <- PC + 1 */
+		if (
+			Rd[0] === Rr[0] &&
+			Rd[1] === Rr[1] &&
+			Rd[2] === Rr[2] &&
+			Rd[3] === Rr[3] &&
+			Rd[4] === Rr[4] &&
+			Rd[5] === Rr[5] &&
+			Rd[6] === Rr[6] &&
+			Rd[7] === Rr[7]
+		) {
+			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
+			this.PC += 2;
+		} 
+		else {
+			/* Program Counter: PC <- PC + 1, Condition false - no skip */
+			this.PC++;
+		}
+	},
+	/**
+	 * DEC - Decrement
+	 * 
+	 * Subtracts one -1- from the contents of register Rd and places the result in the destination register Rd.
+	 * The C Flag in SREG is not affected by the operation, 
+	 * thus allowing the DEC instruction to be used on a loop counter in multiple-precision computations.
+	 * When operating on unsigned values, only BREQ and BRNE branches can be expected to perform consistently. 
+	 * When operating on two’s complement values, all signed branches are available.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 */
+	dec: function(_Rd) {
+
+		/* Operation: Rd <- Rd - 1 */
+
+		/* @TODO */
+
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * DES – Data Encryption Standard
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 *
+	 */
+	des: function(K) {
+
+		/* @TODO */
+
+	},
+	/**
+	 * EICALL – Extended Indirect Call to Subroutine
+	 *
+	 *
+	 *
+	 *
+	 */
+	eicall: function() {
+
+		/* @TODO */
+
+	},
+	/**
+	 * EIJMP – Extended Indirect Jump
+	 *
+	 *
+	 */
+	eijmp: function() {
+
+
+		/* @TODO */
+	},
+	/**
+	 * ELPM – Extended Load Program Memory
+	 *
+	 *
+	 *
+	 */
+	elpm: function() {
+
+		/* @TODO */
+	},
+	/**
 	 * EOR – Exclusive OR
 	 * 
 	 * Performs the logical EOR between the contents of register Rd and register Rr
@@ -1237,6 +1634,74 @@ var avr = {
 		this.sreg[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * FMUL – Fractional Multiply Unsigned
+	 */
+	fmul: function() {
+
+		/* @TODO */
+	},
+	/**
+	 * FMULS – Fractional Multiply Signed
+	 *
+	 */
+	fmuls: function() {
+
+
+		/* @TODO */
+
+	},
+	/**
+	 * FMULSU – Fractional Multiply Signed with Unsigned
+	 */
+	fmulsu: function() {
+
+		/* @TODO */
+	},
+	/**
+	 * ICALL – Indirect Call to Subroutine
+	 *
+	 */
+	icall: function() {
+
+		/* @TODO */
+	},
+	/**
+	 * IJMP – Indirect Jump
+	 */
+	ijmp: function() {
+		
+		/* @TODO */
+	},
+	/**
+	 * IN - Load an I/O Location to Register
+	 * 
+	 * Loads data from the I/O Space (Ports, Timers, Configuration Registers etc.) 
+	 * into register Rd in the Register File.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 * @param A      0 <= A <= 63
+	 */
+	in: function(_Rd, A) {
+
+		var Rd = this.reg[Rd];
+		var A = this.io[A];
+
+		/* Operation: Rd <- I/O(A) */
+		Rd[0] = A[0];
+		Rd[1] = A[1];
+		Rd[2] = A[2];
+		Rd[3] = A[3];
+		Rd[4] = A[4];
+		Rd[5] = A[5];
+		Rd[6] = A[6];
+		Rd[7] = A[7];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1317,6 +1782,57 @@ var avr = {
 
 	},
 	/**
+	 * LAC - Load And Clear
+	 *
+	 * @param Z
+	 * @param _Rd    0 <= d <= 31
+	 */
+	lac: function(Z, _Rd) {
+
+		/* Operation: (Z) <- Rd && ($FF - (Z)) */
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * LAS - Load And Set
+	 *
+	 * @param Z
+	 * @param _Rd    0 <= d <= 31
+	 */
+	las: function(Z, _Rd) {
+
+		/* Operation: (Z) <- Rd v (Z), Rd <- (Z) */
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * LAT - Load And Toggle 
+	 *
+	 * @param Z
+	 * @param _Rd    0 <= d <= 31 
+	 */
+	lat: function(Z, Rd) {
+
+		/* @TODO */
+
+ 
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+	},
+	/**
+	 * LD - Load Indirect from Data Space to Register using Index X
+	 */
+	ld: function() {
+
+		/* @TODO */
+	},
+	/**
 	 * LDI – Load Immediate
 	 * 
 	 * Loads an 8 bit constant directly to register 16 to 31.
@@ -1342,6 +1858,59 @@ var avr = {
 		this.PC++;
 
 		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * LDS - Load Direct from Data Space
+	 *
+	 * Loads one byte from the data space to a register.
+	 * For parts with SRAM, the data space consists of the Register File, 
+	 * I/O memory and internal SRAM (and external SRAM if applicable)
+	 * For parts without SRAM, the data space consists of the register file only. 
+	 * The EEPROM has a separate address space.
+	 *
+	 * A 16-bit address must be supplied. 
+	 * Memory access is limited to the current data segment of 64K bytes. 
+	 * The LDS instruction uses the RAMPD Register to access memory above 64K bytes.
+	 * To access another data segment in devices with more than 64K bytes data space, 
+	 * the RAMPD in register in the I/O area has to be changed.
+	 *
+	 * This instruction is not available in all devices. 
+	 * Refer to the device specific instruction set summary.
+	 *
+	 * @param _Rd    0 <= d <= 31
+	 * @param K      0 <= k <= 65535
+	 */
+	lds: function(_Rd, k) {
+
+		var Rd = this.reg[_Rd];
+
+		/* @TODO */
+
+		/* Operation: Rd <- (k) */
+		Rd[0] = this.ds[k][0];
+		Rd[1] = this.ds[k][1];
+		Rd[2] = this.ds[k][2];
+		Rd[3] = this.ds[k][3];
+		Rd[4] = this.ds[k][4];
+		Rd[5] = this.ds[k][5];
+		Rd[6] = this.ds[k][6];
+		Rd[7] = this.ds[k][7];
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
+
+		this.reg[_Rd] = Rd;
+	},
+	/**
+	 * LPM - Load Program Memory 
+	 *
+	 */
+	lpm: function() {
+
+		/* @TODO */
+
+		/* Program Counter: PC <- PC + 1 */
+		this.PC++;
 	},
 	/**
 	 *  Logical Shift Left
