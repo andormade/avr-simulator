@@ -613,7 +613,7 @@ var avr = {
 		Rd[7] = Rd[7];
 
 		/* Z: Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* N: Set if MSB of the result is set; cleared otherwise. */
 		this.sreg[2] = Rd[7];
@@ -1154,7 +1154,7 @@ var avr = {
 	 * This instruction is not available in all devices. 
 	 * Refer to the device specific instruction set summary.
 	 *
-	 * @param 0 <= k <= 64K || 4M
+	 * @param k    0 <= k <= 64K || 4M
 	 */
 	call: function(k) {
 
@@ -1171,7 +1171,7 @@ var avr = {
 	 * Clears a specified bit in an I/O Register. 
 	 * This instruction operates on the lower 32 I/O Registers – addresses 0-31.
 	 *
-	 * @param A    0 <= A <= 31
+	 * @param A    0 <= A <= 31
 	 * @param b    0 <= b <= 7
 	 */
 	cbi: function(A, b) {
@@ -1187,7 +1187,7 @@ var avr = {
 	 * Performs the logical AND between the contents of register Rd and the complement of the constant mask K. 
 	 * The result will be placed in register Rd.
 	 *
-	 * @param Rd    16 <= d <= 31
+	 * @param _Rd    16 <= d <= 31
 	 * @param K      0 <= K <= 255
 	 */
 	cbr: function(_Rd, K) {
@@ -1205,9 +1205,9 @@ var avr = {
 		Rd[7] = Rd[7] && !K[7];
 
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
 		/* N: Set if MSB of the result is set; celared otherwise */
-		this.sreg[2] = Rd[7]
+		this.sreg[2] = Rd[7];
 		/* V: Celared */
 		this.sreg[3] = false;
 		/* S: N ^ V, For signed tests. */
@@ -1363,7 +1363,7 @@ var avr = {
 	 * 
 	 * This instruction performs a One’s Complement of register Rd.
 	 *
-	 * @param Rd    0 <= d <= 31
+	 * @param _Rd    0 <= d <= 31
 	 */
 	com: function(_Rd) {
 
@@ -1382,9 +1382,9 @@ var avr = {
 		/* C: Set */
 		this.sreg[0] = true;
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
+		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
 		/* N: Set if MSB of the result is set; celared otherwise */
-		this.sreg[2] = Rd[7]
+		this.sreg[2] = Rd[7];
 		/* V: Celared */
 		this.sreg[3] = false;
 		/* S: N ^ V, For signed tests. */
@@ -1401,8 +1401,8 @@ var avr = {
 	 * This instruction performs a compare between two registers Rd and Rr. None of the registers are changed.
 	 * All conditional branches can be used after this instruction.
 	 *
-	 * @param Rd    0 <= d <= 31
-	 * @param Rr    0 <= r <= 31
+	 * @param _Rd    0 <= d <= 31
+	 * @param _Rr    0 <= r <= 31
 	 */
 	cp: function(_Rd, _Rr) {
 
@@ -1417,7 +1417,7 @@ var avr = {
 		/* C: Set if the absolute value of the contents of Rr is larger than the absolute value of Rd; cleared otherwise. */
 		this.sreg[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise */
 		this.sreg[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
@@ -1454,7 +1454,7 @@ var avr = {
 		/* C: Set if the absolute value of the contents of Rr is larger than the absolute value of Rd; cleared otherwise. */
 		this.sreg[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise */
 		this.sreg[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
@@ -1488,7 +1488,7 @@ var avr = {
 		/* C: Set if the absolute value of K is larger than the absolute value of Rd; cleared otherwise. */
 		this.sreg[0] = !Rd[7] && K[7] || K[7] && R[7] || R[7] && !Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise */
 		this.sreg[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
@@ -1563,7 +1563,7 @@ var avr = {
 	 *
 	 *
 	 *
-	 *
+	 * @param K
 	 */
 	des: function(K) {
 
@@ -1817,7 +1817,7 @@ var avr = {
 	 * @param Z
 	 * @param _Rd    0 <= d <= 31 
 	 */
-	lat: function(Z, Rd) {
+	lat: function(Z, _Rd) {
 
 		/* @TODO */
 
@@ -1878,7 +1878,7 @@ var avr = {
 	 * Refer to the device specific instruction set summary.
 	 *
 	 * @param _Rd    0 <= d <= 31
-	 * @param K      0 <= k <= 65535
+	 * @param k      0 <= k <= 65535
 	 */
 	lds: function(_Rd, k) {
 
