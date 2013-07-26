@@ -382,42 +382,42 @@ var avr = {
 	 * 
 	 * @param _Rd    0 < d < 31
 	 * @param _Rr    0 < r < 31
-	 */	
+	 */
 	adc: function(_Rd, _Rr) {
 
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
-		
+
 		/* Operation: Rd <- Rd + Rr + C */
 		C[0] = this.sreg[0];
-		
+
 		R[0] = !!(Rd[0] ^ Rr[0]);
 		C[1] = Rd[0] && Rr[0];
-		
+
 		R[1] = !!(Rd[1] ^ Rr[1] ^ C[1]);
 		C[2] = (Rd[1] || Rr[1]) && C[1];
-		
+
 		R[2] = !!(Rd[2] ^ Rr[2] ^ C[2]);
 		C[3] = (Rd[2] || Rr[2]) && C[2];
-		
+
 		R[3] = !!(Rd[3] ^ Rr[3] ^ C[3]);
 		C[4] = (Rd[3] || Rr[3]) && C[3];
-		
+
 		R[4] = !!(Rd[4] ^ Rr[4] ^ C[4]);
 		C[5] = (Rd[4] || Rr[4]) && C[4];
 
 		R[5] = !!(Rd[5] ^ Rr[5] ^ C[5]);
 		C[6] = (Rd[5] || Rr[5]) && C[5];
-		
+
 		R[6] = !!(Rd[6] ^ Rr[6] ^ C[6]);
 		C[7] = (Rd[6] || Rr[6]) && C[6];
-		
+
 		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
-		
+
 		/* C: Set if there was carry from the MSB of the result; cleared otherwise. */
-		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] &&Rd[7];
+		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] && Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise. */
@@ -428,10 +428,10 @@ var avr = {
 		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
 		/* H: Set if there was a carry from bit 3; cleared otherwise. */
 		this.sreg[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.reg[_Rd] = R;
 	},
 	/**
@@ -448,35 +448,35 @@ var avr = {
 		var Rr = this.reg[_Rr];
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
-		
+
 		/* Operation: Rd <- Rd + Rr */
 		C[0] = false;
-		
+
 		R[0] = !!(Rd[0] ^ Rr[0]);
 		C[1] = Rd[0] && Rr[0];
-		
+
 		R[1] = !!(Rd[1] ^ Rr[1] ^ C[1]);
 		C[2] = (Rd[1] || Rr[1]) && C[1];
-		
+
 		R[2] = !!(Rd[2] ^ Rr[2] ^ C[2]);
 		C[3] = (Rd[2] || Rr[2]) && C[2];
-		
+
 		R[3] = !!(Rd[3] ^ Rr[3] ^ C[3]);
 		C[4] = (Rd[3] || Rr[3]) && C[3];
-		
+
 		R[4] = !!(Rd[4] ^ Rr[4] ^ C[4]);
 		C[5] = (Rd[4] || Rr[4]) && C[4];
 
 		R[5] = !!(Rd[5] ^ Rr[5] ^ C[5]);
 		C[6] = (Rd[5] || Rr[5]) && C[5];
-		
+
 		R[6] = !!(Rd[6] ^ Rr[6] ^ C[6]);
 		C[7] = (Rd[6] || Rr[6]) && C[6];
-		
+
 		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
-		
+
 		/* C: Set if there was carry from the MSB of the result; cleared otherwise. */
-		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] &&Rd[7];
+		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] && Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise. */
@@ -487,10 +487,10 @@ var avr = {
 		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
 		/* H: Set if there was a carry from bit 3; cleared otherwise. */
 		this.sreg[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.reg[_Rd] = R;
 	},
 	/**
@@ -1517,18 +1517,18 @@ var avr = {
 
 		/* Operation if Rd = Rr then PC <- PC + 2 (or 3) else PC <- PC + 1 */
 		if (
-			Rd[0] === Rr[0] &&
-			Rd[1] === Rr[1] &&
-			Rd[2] === Rr[2] &&
-			Rd[3] === Rr[3] &&
-			Rd[4] === Rr[4] &&
-			Rd[5] === Rr[5] &&
-			Rd[6] === Rr[6] &&
-			Rd[7] === Rr[7]
-		) {
+				Rd[0] === Rr[0] &&
+				Rd[1] === Rr[1] &&
+				Rd[2] === Rr[2] &&
+				Rd[3] === Rr[3] &&
+				Rd[4] === Rr[4] &&
+				Rd[5] === Rr[5] &&
+				Rd[6] === Rr[6] &&
+				Rd[7] === Rr[7]
+				) {
 			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
 			this.PC += 2;
-		} 
+		}
 		else {
 			/* Program Counter: PC <- PC + 1, Condition false - no skip */
 			this.PC++;
@@ -1676,7 +1676,7 @@ var avr = {
 	 * IJMP – Indirect Jump
 	 */
 	ijmp: function() {
-		
+
 		/* @TODO */
 	},
 	/**
@@ -1724,33 +1724,33 @@ var avr = {
 		var Rd = this.reg[_Rd];
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
-		
+
 		/* Operation: Rd <- Rd + Rr */
 		C[0] = false;
-		
+
 		R[0] = !Rd[0];
 		C[1] = Rd[0];
-		
+
 		R[1] = !!(Rd[1] ^ C[1]);
 		C[2] = Rd[1] && C[1];
-		
+
 		R[2] = !!(Rd[2] ^ C[2]);
 		C[3] = Rd[2] && C[2];
-		
+
 		R[3] = !!(Rd[3] ^ C[3]);
 		C[4] = Rd[3] && C[3];
-		
+
 		R[4] = !!(Rd[4] ^ C[4]);
 		C[5] = Rd[4] && C[4];
 
 		R[5] = !!(Rd[5] ^ C[5]);
 		C[6] = Rd[5] && C[5];
-		
+
 		R[6] = !!(Rd[6] ^ C[6]);
 		C[7] = Rd[6] && C[6];
-		
+
 		R[7] = !!(Rd[7] ^ C[7]);
-		
+
 		/* Z: Set if the result is $00; cleared otherwise. */
 		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise. */
@@ -1759,10 +1759,10 @@ var avr = {
 		this.sreg[3] = R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && !R[0];
 		/* S: N ^ V, For signed tests. */
 		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
-		
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.reg[_Rd] = R;
 	},
 	/**
@@ -1821,7 +1821,7 @@ var avr = {
 
 		/* @TODO */
 
- 
+
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 	},
@@ -2726,45 +2726,45 @@ var avr = {
 	 */
 	sub: function(_Rd, _Rr) {
 
-		
+
 		var Rd = this.reg[_Rd];
 		var Rr = this.reg[_Rr];
 		var C = [false, false, false, false, false, false, false, false];
 		var R = [false, false, false, false, false, false, false, false];
-		
+
 		/* Operation Rd <- Rd + Rr */
 		C[0] = false;
-		
+
 		R[0] = !!(Rd[0] ^ Rr[0]);
 		C[1] = !Rd[0] && Rr[0];
-		
+
 		R[1] = !!(Rd[1] ^ Rr[1] ^ C[1]);
 		C[2] = C[1] && !!(Rd[1] ^ Rr[1]) || (!Rd[1] && Rr[1]);
-		
+
 		R[2] = !!(Rd[2] ^ Rr[2] ^ C[2]);
 		C[3] = C[2] && !!(Rd[2] ^ Rr[2]) || (!Rd[2] && Rr[2]);
-		
+
 		R[3] = !!(Rd[3] ^ Rr[3] ^ C[3]);
 		C[4] = C[3] && !!(Rd[3] ^ Rr[3]) || (!Rd[3] && Rr[3]);
-		
+
 		R[4] = !!(Rd[4] ^ Rr[4] ^ C[4]);
 		C[5] = C[4] && !!(Rd[4] ^ Rr[4]) || (!Rd[4] && Rr[4]);
-		
+
 		R[5] = !!(Rd[5] ^ Rr[5] ^ C[5]);
 		C[6] = C[5] && !!(Rd[5] ^ Rr[5]) || (!Rd[5] && Rr[5]);
-		
+
 		R[6] = !!(Rd[6] ^ Rr[6] ^ C[6]);
 		C[7] = C[6] && !!(Rd[6] ^ Rr[6]) || (!Rd[6] && Rr[6]);
-		
+
 		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
-		
+
 		/* C: */
 		this.sreg[0] = C[7] && !!(Rd[7] ^ Rr[7]) || (!Rd[7] && Rr[7]);
 		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.reg[_Rd] = R;
 	},
 	/**
