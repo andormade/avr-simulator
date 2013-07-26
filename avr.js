@@ -35,346 +35,301 @@
 var avr = {
 	/** Program counter */
 	PC: 0,
-	/** Stack pointer */
-	SP: 8,
-	SPL: 0,
-	SPH: 0,
-	/** SREG */
-	sreg: {
-		7: false, /* I - Global interrupt enable */
-		6: false, /* T - Bit Copy Storage */
-		5: false, /* H - Half Carry Flag */
-		4: false, /* S - Sign Bit */
-		3: false, /* V - Two's Complement Overflow Flag */
-		2: false, /* N - Negative Flag */
-		1: false, /* Z - Zero flag */
-		0: false /*  C - Carry flag */
-	},
+	/** SPH - Stack Pointer Low */
+	spl: 0x5d,
+	/** SPH - Stack Pointer High */
+	sph: 0x5e,
 	/**
-	 * General Purpose Register File
-	 * 
+	 *  SREG - Status Register
+	 *     0       1       2       3       4       5       6       7
+	 * .-------.-------.-------.-------.-------.-------.-------.-------.
+	 * |   C   |   Z   |   N   |   V   |   S   |   H   |   T   |   I   |
+	 * '-------'-------'-------'-------'-------'-------'-------'-------'
+	 *  C - Carry flag
+	 *  Z - Zero flag
+	 *  N - Negative Flag
+	 *  V - Two's Complement Overflow Flag
+	 *  S - Sign Bit
+	 *  H - Half Carry Flag 
+	 *  T - Bit Copy Storage
+	 *  I - Global interrupt enable 
+	 */
+	sreg: 0x5f,
+	/*
+	 * Data Space 
+	 *
 	 *     0       1       2       3       4       5       6       7
 	 * .-------.-------.-------.-------.-------.-------.-------.-------.
 	 * |  LSB  |       |       |       |       |       |       |  MSB  |
 	 * '-------'-------'-------'-------'-------'-------'-------'-------'
 	 */
-	reg: {
-		/*    MSB                                              LSB        Data Memory Address */
-		r0: [false, false, false, false, false, false, false, false], /*  0x00    R0  */
-		r1: [false, false, false, false, false, false, false, false], /*  0x01    R1  */
-		r2: [false, false, false, false, false, false, false, false], /*  0x02    R2  */
-		r3: [false, false, false, false, false, false, false, false], /*  0x03    R3  */
-		r4: [false, false, false, false, false, false, false, false], /*  0x04    R4  */
-		r5: [false, false, false, false, false, false, false, false], /*  0x05    R5  */
-		r6: [false, false, false, false, false, false, false, false], /*  0x06    R6  */
-		r7: [false, false, false, false, false, false, false, false], /*  0x07    R7  */
-		r8: [false, false, false, false, false, false, false, false], /*  0x08    R8  */
-		r9: [false, false, false, false, false, false, false, false], /*  0x09    R9  */
-		r10: [false, false, false, false, false, false, false, false], /* 0x0A    R10 */
-		r11: [false, false, false, false, false, false, false, false], /* 0x0B    R11 */
-		r12: [false, false, false, false, false, false, false, false], /* 0x0C    R12 */
-		r13: [false, false, false, false, false, false, false, false], /* 0x0D    R13 */
-		r14: [false, false, false, false, false, false, false, false], /* 0x0E    R14 */
-		r15: [false, false, false, false, false, false, false, false], /* 0x0F    R15 */
+	dataspace: {
+		/**
+		 * Register Space    0x00 - 0xFF
+		 */
+		
+		/*
+		 * General Purpose Register File    0x00 - 0x1f
+		 *      MSB                                              LSB           */
+		0x00: [false, false, false, false, false, false, false, false], /* R0  */
+		0x01: [false, false, false, false, false, false, false, false], /* R1  */
+		0x02: [false, false, false, false, false, false, false, false], /* R2  */
+		0x03: [false, false, false, false, false, false, false, false], /* R3  */
+		0x04: [false, false, false, false, false, false, false, false], /* R4  */
+		0x05: [false, false, false, false, false, false, false, false], /* R5  */
+		0x06: [false, false, false, false, false, false, false, false], /* R6  */
+		0x07: [false, false, false, false, false, false, false, false], /* R7  */
+		0x08: [false, false, false, false, false, false, false, false], /* R8  */
+		0x09: [false, false, false, false, false, false, false, false], /* R9  */
+		0x0a: [false, false, false, false, false, false, false, false], /* R10 */
+		0x0b: [false, false, false, false, false, false, false, false], /* R11 */
+		0x0c: [false, false, false, false, false, false, false, false], /* R12 */
+		0x0d: [false, false, false, false, false, false, false, false], /* R13 */
+		0x0e: [false, false, false, false, false, false, false, false], /* R14 */
+		0x0f: [false, false, false, false, false, false, false, false], /* R15 */
 
-		r16: [false, false, false, false, false, false, false, false], /* 0x10    R16 */
-		r17: [false, false, false, false, false, false, false, false], /* 0x11    R17 */
-		r18: [false, false, false, false, false, false, false, false], /* 0x12    R18 */
-		r19: [false, false, false, false, false, false, false, false], /* 0x13    R19 */
-		r20: [false, false, false, false, false, false, false, false], /* 0x14    R20 */
-		r21: [false, false, false, false, false, false, false, false], /* 0x15    R21 */
-		r22: [false, false, false, false, false, false, false, false], /* 0x16    R22 */
-		r23: [false, false, false, false, false, false, false, false], /* 0x17    R23 */
-		r24: [false, false, false, false, false, false, false, false], /* 0x18    R24 */
-		r25: [false, false, false, false, false, false, false, false], /* 0x19    R25 */
-		r26: [false, false, false, false, false, false, false, false], /* 0x1A    R26    X-register Low Byte */
-		r27: [false, false, false, false, false, false, false, false], /* 0x1B    R27    X-register High Byte */
-		r28: [false, false, false, false, false, false, false, false], /* 0x1C    R28    Y-register Low Byte */
-		r29: [false, false, false, false, false, false, false, false], /* 0x1D    R29    Y-register High Byte */
-		r30: [false, false, false, false, false, false, false, false], /* 0x1E    R30    Z-register Low Byte */
-		r31: [false, false, false, false, false, false, false, false] /*  0x1F    R31    Z-register High Byte */
+		0x10: [false, false, false, false, false, false, false, false], /* R16 */
+		0x11: [false, false, false, false, false, false, false, false], /* R17 */
+		0x12: [false, false, false, false, false, false, false, false], /* R18 */
+		0x13: [false, false, false, false, false, false, false, false], /* R19 */
+		0x14: [false, false, false, false, false, false, false, false], /* R20 */
+		0x15: [false, false, false, false, false, false, false, false], /* R21 */
+		0x16: [false, false, false, false, false, false, false, false], /* R22 */
+		0x17: [false, false, false, false, false, false, false, false], /* R23 */
+		0x18: [false, false, false, false, false, false, false, false], /* R24 */
+		0x19: [false, false, false, false, false, false, false, false], /* R25 */
+		0x1a: [false, false, false, false, false, false, false, false], /* R26    X-register Low Byte */
+		0x1b: [false, false, false, false, false, false, false, false], /* R27    X-register High Byte */
+		0x1c: [false, false, false, false, false, false, false, false], /* R28    Y-register Low Byte */
+		0x1d: [false, false, false, false, false, false, false, false], /* R29    Y-register High Byte */
+		0x1e: [false, false, false, false, false, false, false, false], /* R30    Z-register Low Byte */
+		0x1f: [false, false, false, false, false, false, false, false], /* R31    Z-register High Byte */
+
+		0x20: [false, false, false, false, false, false, false, false],
+		0x21: [false, false, false, false, false, false, false, false],
+		0x22: [false, false, false, false, false, false, false, false],
+		0x23: [false, false, false, false, false, false, false, false],
+		0x24: [false, false, false, false, false, false, false, false],
+		0x25: [false, false, false, false, false, false, false, false],
+		0x26: [false, false, false, false, false, false, false, false],
+		0x27: [false, false, false, false, false, false, false, false],
+		0x28: [false, false, false, false, false, false, false, false],
+		0x29: [false, false, false, false, false, false, false, false],
+		0x2a: [false, false, false, false, false, false, false, false],
+		0x2b: [false, false, false, false, false, false, false, false],
+		0x2c: [false, false, false, false, false, false, false, false],
+		0x2d: [false, false, false, false, false, false, false, false],
+		0x2e: [false, false, false, false, false, false, false, false],
+		0x2f: [false, false, false, false, false, false, false, false],
+		0x30: [false, false, false, false, false, false, false, false],
+		0x31: [false, false, false, false, false, false, false, false],
+		0x32: [false, false, false, false, false, false, false, false],
+		0x33: [false, false, false, false, false, false, false, false],
+		0x34: [false, false, false, false, false, false, false, false],
+		0x35: [false, false, false, false, false, false, false, false],
+		0x36: [false, false, false, false, false, false, false, false],
+		0x37: [false, false, false, false, false, false, false, false],
+		0x38: [false, false, false, false, false, false, false, false],
+		0x39: [false, false, false, false, false, false, false, false],
+		0x3a: [false, false, false, false, false, false, false, false],
+		0x3b: [false, false, false, false, false, false, false, false],
+		0x3c: [false, false, false, false, false, false, false, false],
+		0x3d: [false, false, false, false, false, false, false, false],
+		0x3e: [false, false, false, false, false, false, false, false],
+		0x3f: [false, false, false, false, false, false, false, false],
+		0x40: [false, false, false, false, false, false, false, false],
+		0x41: [false, false, false, false, false, false, false, false],
+		0x42: [false, false, false, false, false, false, false, false],
+		0x43: [false, false, false, false, false, false, false, false],
+		0x44: [false, false, false, false, false, false, false, false],
+		0x45: [false, false, false, false, false, false, false, false],
+		0x46: [false, false, false, false, false, false, false, false],
+		0x47: [false, false, false, false, false, false, false, false],
+		0x48: [false, false, false, false, false, false, false, false],
+		0x49: [false, false, false, false, false, false, false, false],
+		0x4a: [false, false, false, false, false, false, false, false],
+		0x4b: [false, false, false, false, false, false, false, false],
+		0x4c: [false, false, false, false, false, false, false, false],
+		0x4d: [false, false, false, false, false, false, false, false],
+		0x4e: [false, false, false, false, false, false, false, false],
+		0x4f: [false, false, false, false, false, false, false, false],
+		0x50: [false, false, false, false, false, false, false, false],
+		0x51: [false, false, false, false, false, false, false, false],
+		0x52: [false, false, false, false, false, false, false, false],
+		0x53: [false, false, false, false, false, false, false, false],
+		0x54: [false, false, false, false, false, false, false, false],
+		0x55: [false, false, false, false, false, false, false, false],
+		0x56: [false, false, false, false, false, false, false, false],
+		0x57: [false, false, false, false, false, false, false, false],
+		0x58: [false, false, false, false, false, false, false, false],
+		0x59: [false, false, false, false, false, false, false, false],
+		0x5a: [false, false, false, false, false, false, false, false],
+		0x5b: [false, false, false, false, false, false, false, false],
+		0x5c: [false, false, false, false, false, false, false, false],
+		0x5d: [false, false, false, false, false, false, false, false],
+		0x5e: [false, false, false, false, false, false, false, false],
+		0x5f: [false, false, false, false, false, false, false, false],
+		0x60: [false, false, false, false, false, false, false, false],
+		0x61: [false, false, false, false, false, false, false, false],
+		0x62: [false, false, false, false, false, false, false, false],
+		0x63: [false, false, false, false, false, false, false, false],
+		0x64: [false, false, false, false, false, false, false, false],
+		0x65: [false, false, false, false, false, false, false, false],
+		0x66: [false, false, false, false, false, false, false, false],
+		0x67: [false, false, false, false, false, false, false, false],
+		0x68: [false, false, false, false, false, false, false, false],
+		0x69: [false, false, false, false, false, false, false, false],
+		0x6a: [false, false, false, false, false, false, false, false],
+		0x6b: [false, false, false, false, false, false, false, false],
+		0x6c: [false, false, false, false, false, false, false, false],
+		0x6d: [false, false, false, false, false, false, false, false],
+		0x6e: [false, false, false, false, false, false, false, false],
+		0x6f: [false, false, false, false, false, false, false, false],
+		0x70: [false, false, false, false, false, false, false, false],
+		0x71: [false, false, false, false, false, false, false, false],
+		0x72: [false, false, false, false, false, false, false, false],
+		0x73: [false, false, false, false, false, false, false, false],
+		0x74: [false, false, false, false, false, false, false, false],
+		0x75: [false, false, false, false, false, false, false, false],
+		0x76: [false, false, false, false, false, false, false, false],
+		0x77: [false, false, false, false, false, false, false, false],
+		0x78: [false, false, false, false, false, false, false, false],
+		0x79: [false, false, false, false, false, false, false, false],
+		0x7a: [false, false, false, false, false, false, false, false],
+		0x7b: [false, false, false, false, false, false, false, false],
+		0x7c: [false, false, false, false, false, false, false, false],
+		0x7d: [false, false, false, false, false, false, false, false],
+		0x7e: [false, false, false, false, false, false, false, false],
+		0x7f: [false, false, false, false, false, false, false, false],
+		0x80: [false, false, false, false, false, false, false, false],
+		0x81: [false, false, false, false, false, false, false, false],
+		0x82: [false, false, false, false, false, false, false, false],
+		0x83: [false, false, false, false, false, false, false, false],
+		0x84: [false, false, false, false, false, false, false, false],
+		0x85: [false, false, false, false, false, false, false, false],
+		0x86: [false, false, false, false, false, false, false, false],
+		0x87: [false, false, false, false, false, false, false, false],
+		0x88: [false, false, false, false, false, false, false, false],
+		0x89: [false, false, false, false, false, false, false, false],
+		0x8a: [false, false, false, false, false, false, false, false],
+		0x8b: [false, false, false, false, false, false, false, false],
+		0x8c: [false, false, false, false, false, false, false, false],
+		0x8d: [false, false, false, false, false, false, false, false],
+		0x8e: [false, false, false, false, false, false, false, false],
+		0x8f: [false, false, false, false, false, false, false, false],
+		0x90: [false, false, false, false, false, false, false, false],
+		0x91: [false, false, false, false, false, false, false, false],
+		0x92: [false, false, false, false, false, false, false, false],
+		0x93: [false, false, false, false, false, false, false, false],
+		0x94: [false, false, false, false, false, false, false, false],
+		0x95: [false, false, false, false, false, false, false, false],
+		0x96: [false, false, false, false, false, false, false, false],
+		0x97: [false, false, false, false, false, false, false, false],
+		0x98: [false, false, false, false, false, false, false, false],
+		0x99: [false, false, false, false, false, false, false, false],
+		0x9a: [false, false, false, false, false, false, false, false],
+		0x9b: [false, false, false, false, false, false, false, false],
+		0x9c: [false, false, false, false, false, false, false, false],
+		0x9d: [false, false, false, false, false, false, false, false],
+		0x9e: [false, false, false, false, false, false, false, false],
+		0x9f: [false, false, false, false, false, false, false, false],
+		0xa0: [false, false, false, false, false, false, false, false],
+		0xa1: [false, false, false, false, false, false, false, false],
+		0xa2: [false, false, false, false, false, false, false, false],
+		0xa3: [false, false, false, false, false, false, false, false],
+		0xa4: [false, false, false, false, false, false, false, false],
+		0xa5: [false, false, false, false, false, false, false, false],
+		0xa6: [false, false, false, false, false, false, false, false],
+		0xa7: [false, false, false, false, false, false, false, false],
+		0xa8: [false, false, false, false, false, false, false, false],
+		0xa9: [false, false, false, false, false, false, false, false],
+		0xaa: [false, false, false, false, false, false, false, false],
+		0xab: [false, false, false, false, false, false, false, false],
+		0xac: [false, false, false, false, false, false, false, false],
+		0xad: [false, false, false, false, false, false, false, false],
+		0xae: [false, false, false, false, false, false, false, false],
+		0xaf: [false, false, false, false, false, false, false, false],
+		0xb0: [false, false, false, false, false, false, false, false],
+		0xb1: [false, false, false, false, false, false, false, false],
+		0xb2: [false, false, false, false, false, false, false, false],
+		0xb3: [false, false, false, false, false, false, false, false],
+		0xb4: [false, false, false, false, false, false, false, false],
+		0xb5: [false, false, false, false, false, false, false, false],
+		0xb6: [false, false, false, false, false, false, false, false],
+		0xb7: [false, false, false, false, false, false, false, false],
+		0xb8: [false, false, false, false, false, false, false, false],
+		0xb9: [false, false, false, false, false, false, false, false],
+		0xba: [false, false, false, false, false, false, false, false],
+		0xbb: [false, false, false, false, false, false, false, false],
+		0xbc: [false, false, false, false, false, false, false, false],
+		0xbd: [false, false, false, false, false, false, false, false],
+		0xbe: [false, false, false, false, false, false, false, false],
+		0xbf: [false, false, false, false, false, false, false, false],
+		0xc0: [false, false, false, false, false, false, false, false],
+		0xc1: [false, false, false, false, false, false, false, false],
+		0xc2: [false, false, false, false, false, false, false, false],
+		0xc3: [false, false, false, false, false, false, false, false],
+		0xc4: [false, false, false, false, false, false, false, false],
+		0xc5: [false, false, false, false, false, false, false, false],
+		0xc6: [false, false, false, false, false, false, false, false],
+		0xc7: [false, false, false, false, false, false, false, false],
+		0xc8: [false, false, false, false, false, false, false, false],
+		0xc9: [false, false, false, false, false, false, false, false],
+		0xca: [false, false, false, false, false, false, false, false],
+		0xcb: [false, false, false, false, false, false, false, false],
+		0xcc: [false, false, false, false, false, false, false, false],
+		0xcd: [false, false, false, false, false, false, false, false],
+		0xce: [false, false, false, false, false, false, false, false],
+		0xcf: [false, false, false, false, false, false, false, false],
+		0xd0: [false, false, false, false, false, false, false, false],
+		0xd1: [false, false, false, false, false, false, false, false],
+		0xd2: [false, false, false, false, false, false, false, false],
+		0xd3: [false, false, false, false, false, false, false, false],
+		0xd4: [false, false, false, false, false, false, false, false],
+		0xd5: [false, false, false, false, false, false, false, false],
+		0xd6: [false, false, false, false, false, false, false, false],
+		0xd7: [false, false, false, false, false, false, false, false],
+		0xd8: [false, false, false, false, false, false, false, false],
+		0xd9: [false, false, false, false, false, false, false, false],
+		0xda: [false, false, false, false, false, false, false, false],
+		0xdb: [false, false, false, false, false, false, false, false],
+		0xdc: [false, false, false, false, false, false, false, false],
+		0xdd: [false, false, false, false, false, false, false, false],
+		0xde: [false, false, false, false, false, false, false, false],
+		0xdf: [false, false, false, false, false, false, false, false],
+		0xe0: [false, false, false, false, false, false, false, false],
+		0xe1: [false, false, false, false, false, false, false, false],
+		0xe2: [false, false, false, false, false, false, false, false],
+		0xe3: [false, false, false, false, false, false, false, false],
+		0xe4: [false, false, false, false, false, false, false, false],
+		0xe5: [false, false, false, false, false, false, false, false],
+		0xe6: [false, false, false, false, false, false, false, false],
+		0xe7: [false, false, false, false, false, false, false, false],
+		0xe8: [false, false, false, false, false, false, false, false],
+		0xe9: [false, false, false, false, false, false, false, false],
+		0xea: [false, false, false, false, false, false, false, false],
+		0xeb: [false, false, false, false, false, false, false, false],
+		0xec: [false, false, false, false, false, false, false, false],
+		0xed: [false, false, false, false, false, false, false, false],
+		0xee: [false, false, false, false, false, false, false, false],
+		0xef: [false, false, false, false, false, false, false, false],
+		0xf0: [false, false, false, false, false, false, false, false],
+		0xf1: [false, false, false, false, false, false, false, false],
+		0xf2: [false, false, false, false, false, false, false, false],
+		0xf3: [false, false, false, false, false, false, false, false],
+		0xf4: [false, false, false, false, false, false, false, false],
+		0xf5: [false, false, false, false, false, false, false, false],
+		0xf6: [false, false, false, false, false, false, false, false],
+		0xf7: [false, false, false, false, false, false, false, false],
+		0xf8: [false, false, false, false, false, false, false, false],
+		0xf9: [false, false, false, false, false, false, false, false],
+		0xfa: [false, false, false, false, false, false, false, false],
+		0xfb: [false, false, false, false, false, false, false, false],
+		0xfc: [false, false, false, false, false, false, false, false],
+		0xfd: [false, false, false, false, false, false, false, false],
+		0xfe: [false, false, false, false, false, false, false, false],
+		0xff: [false, false, false, false, false, false, false, false]
 	},
-	/**
-	 * Register Space    0x00 - 0xFF
-	 * 
-	 *     0       1       2       3       4       5       6       7
-	 * .-------.-------.-------.-------.-------.-------.-------.-------.
-	 * |  LSB  |       |       |       |       |       |       |  MSB  |
-	 * '-------'-------'-------'-------'-------'-------'-------'-------'
-	 */
-	databus: [
-		[false, false, false, false, false, false, false, false], /* 0x00 */
-		[false, false, false, false, false, false, false, false], /* 0x01 */
-		[false, false, false, false, false, false, false, false], /* 0x02 */
-		[false, false, false, false, false, false, false, false], /* 0x03 */
-		[false, false, false, false, false, false, false, false], /* 0x04 */
-		[false, false, false, false, false, false, false, false], /* 0x05 */
-		[false, false, false, false, false, false, false, false], /* 0x06 */
-		[false, false, false, false, false, false, false, false], /* 0x07 */
-		[false, false, false, false, false, false, false, false], /* 0x08 */
-		[false, false, false, false, false, false, false, false], /* 0x09 */
-		[false, false, false, false, false, false, false, false], /* 0x0A */
-		[false, false, false, false, false, false, false, false], /* 0x0B */
-		[false, false, false, false, false, false, false, false], /* 0x0C */
-		[false, false, false, false, false, false, false, false], /* 0x0D */
-		[false, false, false, false, false, false, false, false], /* 0x0E */
-		[false, false, false, false, false, false, false, false], /* 0x0F */
-
-		[false, false, false, false, false, false, false, false], /* 0x10 */
-		[false, false, false, false, false, false, false, false], /* 0x11 */
-		[false, false, false, false, false, false, false, false], /* 0x12 */
-		[false, false, false, false, false, false, false, false], /* 0x13 */
-		[false, false, false, false, false, false, false, false], /* 0x14 */
-		[false, false, false, false, false, false, false, false], /* 0x15 */
-		[false, false, false, false, false, false, false, false], /* 0x16 */
-		[false, false, false, false, false, false, false, false], /* 0x17 */
-		[false, false, false, false, false, false, false, false], /* 0x18 */
-		[false, false, false, false, false, false, false, false], /* 0x19 */
-		[false, false, false, false, false, false, false, false], /* 0x1A */
-		[false, false, false, false, false, false, false, false], /* 0x1B */
-		[false, false, false, false, false, false, false, false], /* 0x1C */
-		[false, false, false, false, false, false, false, false], /* 0x1D */
-		[false, false, false, false, false, false, false, false], /* 0x1E */
-		[false, false, false, false, false, false, false, false], /* 0x1F */
-
-		[false, false, false, false, false, false, false, false], /* 0x20 */
-		[false, false, false, false, false, false, false, false], /* 0x21 */
-		[false, false, false, false, false, false, false, false], /* 0x22 */
-		[false, false, false, false, false, false, false, false], /* 0x23 */
-		[false, false, false, false, false, false, false, false], /* 0x24 */
-		[false, false, false, false, false, false, false, false], /* 0x25 */
-		[false, false, false, false, false, false, false, false], /* 0x26 */
-		[false, false, false, false, false, false, false, false], /* 0x27 */
-		[false, false, false, false, false, false, false, false], /* 0x28 */
-		[false, false, false, false, false, false, false, false], /* 0x29 */
-		[false, false, false, false, false, false, false, false], /* 0x2A */
-		[false, false, false, false, false, false, false, false], /* 0x2B */
-		[false, false, false, false, false, false, false, false], /* 0x2C */
-		[false, false, false, false, false, false, false, false], /* 0x2D */
-		[false, false, false, false, false, false, false, false], /* 0x2E */
-		[false, false, false, false, false, false, false, false], /* 0x2F */
-
-		[false, false, false, false, false, false, false, false], /* 0x30 */
-		[false, false, false, false, false, false, false, false], /* 0x31 */
-		[false, false, false, false, false, false, false, false], /* 0x32 */
-		[false, false, false, false, false, false, false, false], /* 0x33 */
-		[false, false, false, false, false, false, false, false], /* 0x34 */
-		[false, false, false, false, false, false, false, false], /* 0x35 */
-		[false, false, false, false, false, false, false, false], /* 0x36 */
-		[false, false, false, false, false, false, false, false], /* 0x37 */
-		[false, false, false, false, false, false, false, false], /* 0x38 */
-		[false, false, false, false, false, false, false, false], /* 0x39 */
-		[false, false, false, false, false, false, false, false], /* 0x3A */
-		[false, false, false, false, false, false, false, false], /* 0x3B */
-		[false, false, false, false, false, false, false, false], /* 0x3C */
-		[false, false, false, false, false, false, false, false], /* 0x3D */
-		[false, false, false, false, false, false, false, false], /* 0x3E */
-		[false, false, false, false, false, false, false, false], /* 0x3F */
-
-		[false, false, false, false, false, false, false, false], /* 0x40 */
-		[false, false, false, false, false, false, false, false], /* 0x41 */
-		[false, false, false, false, false, false, false, false], /* 0x42 */
-		[false, false, false, false, false, false, false, false], /* 0x43 */
-		[false, false, false, false, false, false, false, false], /* 0x44 */
-		[false, false, false, false, false, false, false, false], /* 0x45 */
-		[false, false, false, false, false, false, false, false], /* 0x46 */
-		[false, false, false, false, false, false, false, false], /* 0x47 */
-		[false, false, false, false, false, false, false, false], /* 0x48 */
-		[false, false, false, false, false, false, false, false], /* 0x49 */
-		[false, false, false, false, false, false, false, false], /* 0x4A */
-		[false, false, false, false, false, false, false, false], /* 0x4B */
-		[false, false, false, false, false, false, false, false], /* 0x4C */
-		[false, false, false, false, false, false, false, false], /* 0x4D */
-		[false, false, false, false, false, false, false, false], /* 0x4E */
-		[false, false, false, false, false, false, false, false], /* 0x4F */
-
-		[false, false, false, false, false, false, false, false], /* 0x50 */
-		[false, false, false, false, false, false, false, false], /* 0x51 */
-		[false, false, false, false, false, false, false, false], /* 0x52 */
-		[false, false, false, false, false, false, false, false], /* 0x53 */
-		[false, false, false, false, false, false, false, false], /* 0x54 */
-		[false, false, false, false, false, false, false, false], /* 0x55 */
-		[false, false, false, false, false, false, false, false], /* 0x56 */
-		[false, false, false, false, false, false, false, false], /* 0x57 */
-		[false, false, false, false, false, false, false, false], /* 0x58 */
-		[false, false, false, false, false, false, false, false], /* 0x59 */
-		[false, false, false, false, false, false, false, false], /* 0x5A */
-		[false, false, false, false, false, false, false, false], /* 0x5B */
-		[false, false, false, false, false, false, false, false], /* 0x5C */
-		[false, false, false, false, false, false, false, false], /* 0x5D */
-		[false, false, false, false, false, false, false, false], /* 0x5E */
-		[false, false, false, false, false, false, false, false], /* 0x5F */
-
-		[false, false, false, false, false, false, false, false], /* 0x60 */
-		[false, false, false, false, false, false, false, false], /* 0x61 */
-		[false, false, false, false, false, false, false, false], /* 0x62 */
-		[false, false, false, false, false, false, false, false], /* 0x63 */
-		[false, false, false, false, false, false, false, false], /* 0x64 */
-		[false, false, false, false, false, false, false, false], /* 0x65 */
-		[false, false, false, false, false, false, false, false], /* 0x66 */
-		[false, false, false, false, false, false, false, false], /* 0x67 */
-		[false, false, false, false, false, false, false, false], /* 0x68 */
-		[false, false, false, false, false, false, false, false], /* 0x69 */
-		[false, false, false, false, false, false, false, false], /* 0x6A */
-		[false, false, false, false, false, false, false, false], /* 0x6B */
-		[false, false, false, false, false, false, false, false], /* 0x6C */
-		[false, false, false, false, false, false, false, false], /* 0x6D */
-		[false, false, false, false, false, false, false, false], /* 0x6E */
-		[false, false, false, false, false, false, false, false], /* 0x6F */
-
-		[false, false, false, false, false, false, false, false], /* 0x70 */
-		[false, false, false, false, false, false, false, false], /* 0x71 */
-		[false, false, false, false, false, false, false, false], /* 0x72 */
-		[false, false, false, false, false, false, false, false], /* 0x73 */
-		[false, false, false, false, false, false, false, false], /* 0x74 */
-		[false, false, false, false, false, false, false, false], /* 0x75 */
-		[false, false, false, false, false, false, false, false], /* 0x76 */
-		[false, false, false, false, false, false, false, false], /* 0x77 */
-		[false, false, false, false, false, false, false, false], /* 0x78 */
-		[false, false, false, false, false, false, false, false], /* 0x79 */
-		[false, false, false, false, false, false, false, false], /* 0x7A */
-		[false, false, false, false, false, false, false, false], /* 0x7B */
-		[false, false, false, false, false, false, false, false], /* 0x7C */
-		[false, false, false, false, false, false, false, false], /* 0x7D */
-		[false, false, false, false, false, false, false, false], /* 0x7E */
-		[false, false, false, false, false, false, false, false], /* 0x7F */
-
-		[false, false, false, false, false, false, false, false], /* 0x80 */
-		[false, false, false, false, false, false, false, false], /* 0x81 */
-		[false, false, false, false, false, false, false, false], /* 0x82 */
-		[false, false, false, false, false, false, false, false], /* 0x83 */
-		[false, false, false, false, false, false, false, false], /* 0x84 */
-		[false, false, false, false, false, false, false, false], /* 0x85 */
-		[false, false, false, false, false, false, false, false], /* 0x86 */
-		[false, false, false, false, false, false, false, false], /* 0x87 */
-		[false, false, false, false, false, false, false, false], /* 0x88 */
-		[false, false, false, false, false, false, false, false], /* 0x89 */
-		[false, false, false, false, false, false, false, false], /* 0x8A */
-		[false, false, false, false, false, false, false, false], /* 0x8B */
-		[false, false, false, false, false, false, false, false], /* 0x8C */
-		[false, false, false, false, false, false, false, false], /* 0x8D */
-		[false, false, false, false, false, false, false, false], /* 0x8E */
-		[false, false, false, false, false, false, false, false], /* 0x8F */
-
-		[false, false, false, false, false, false, false, false], /* 0x90 */
-		[false, false, false, false, false, false, false, false], /* 0x91 */
-		[false, false, false, false, false, false, false, false], /* 0x92 */
-		[false, false, false, false, false, false, false, false], /* 0x93 */
-		[false, false, false, false, false, false, false, false], /* 0x94 */
-		[false, false, false, false, false, false, false, false], /* 0x95 */
-		[false, false, false, false, false, false, false, false], /* 0x96 */
-		[false, false, false, false, false, false, false, false], /* 0x97 */
-		[false, false, false, false, false, false, false, false], /* 0x98 */
-		[false, false, false, false, false, false, false, false], /* 0x99 */
-		[false, false, false, false, false, false, false, false], /* 0x9A */
-		[false, false, false, false, false, false, false, false], /* 0x9B */
-		[false, false, false, false, false, false, false, false], /* 0x9C */
-		[false, false, false, false, false, false, false, false], /* 0x9D */
-		[false, false, false, false, false, false, false, false], /* 0x9E */
-		[false, false, false, false, false, false, false, false], /* 0x9F */
-
-		[false, false, false, false, false, false, false, false], /* 0xA0 */
-		[false, false, false, false, false, false, false, false], /* 0xA1 */
-		[false, false, false, false, false, false, false, false], /* 0xA2 */
-		[false, false, false, false, false, false, false, false], /* 0xA3 */
-		[false, false, false, false, false, false, false, false], /* 0xA4 */
-		[false, false, false, false, false, false, false, false], /* 0xA5 */
-		[false, false, false, false, false, false, false, false], /* 0xA6 */
-		[false, false, false, false, false, false, false, false], /* 0xA7 */
-		[false, false, false, false, false, false, false, false], /* 0xA8 */
-		[false, false, false, false, false, false, false, false], /* 0xA9 */
-		[false, false, false, false, false, false, false, false], /* 0xAA */
-		[false, false, false, false, false, false, false, false], /* 0xAB */
-		[false, false, false, false, false, false, false, false], /* 0xAC */
-		[false, false, false, false, false, false, false, false], /* 0xAD */
-		[false, false, false, false, false, false, false, false], /* 0xAE */
-		[false, false, false, false, false, false, false, false], /* 0xAF */
-
-		[false, false, false, false, false, false, false, false], /* 0xB0 */
-		[false, false, false, false, false, false, false, false], /* 0xB1 */
-		[false, false, false, false, false, false, false, false], /* 0xB2 */
-		[false, false, false, false, false, false, false, false], /* 0xB3 */
-		[false, false, false, false, false, false, false, false], /* 0xB4 */
-		[false, false, false, false, false, false, false, false], /* 0xB5 */
-		[false, false, false, false, false, false, false, false], /* 0xB6 */
-		[false, false, false, false, false, false, false, false], /* 0xB7 */
-		[false, false, false, false, false, false, false, false], /* 0xB8 */
-		[false, false, false, false, false, false, false, false], /* 0xB9 */
-		[false, false, false, false, false, false, false, false], /* 0xBA */
-		[false, false, false, false, false, false, false, false], /* 0xBB */
-		[false, false, false, false, false, false, false, false], /* 0xBC */
-		[false, false, false, false, false, false, false, false], /* 0xBD */
-		[false, false, false, false, false, false, false, false], /* 0xBE */
-		[false, false, false, false, false, false, false, false], /* 0xBF */
-
-		[false, false, false, false, false, false, false, false], /* 0xC0 */
-		[false, false, false, false, false, false, false, false], /* 0xC1 */
-		[false, false, false, false, false, false, false, false], /* 0xC2 */
-		[false, false, false, false, false, false, false, false], /* 0xC3 */
-		[false, false, false, false, false, false, false, false], /* 0xC4 */
-		[false, false, false, false, false, false, false, false], /* 0xC5 */
-		[false, false, false, false, false, false, false, false], /* 0xC6 */
-		[false, false, false, false, false, false, false, false], /* 0xC7 */
-		[false, false, false, false, false, false, false, false], /* 0xC8 */
-		[false, false, false, false, false, false, false, false], /* 0xC9 */
-		[false, false, false, false, false, false, false, false], /* 0xCA */
-		[false, false, false, false, false, false, false, false], /* 0xCB */
-		[false, false, false, false, false, false, false, false], /* 0xCC */
-		[false, false, false, false, false, false, false, false], /* 0xCD */
-		[false, false, false, false, false, false, false, false], /* 0xCE */
-		[false, false, false, false, false, false, false, false], /* 0xCF */
-
-		[false, false, false, false, false, false, false, false], /* 0xD0 */
-		[false, false, false, false, false, false, false, false], /* 0xD1 */
-		[false, false, false, false, false, false, false, false], /* 0xD2 */
-		[false, false, false, false, false, false, false, false], /* 0xD3 */
-		[false, false, false, false, false, false, false, false], /* 0xD4 */
-		[false, false, false, false, false, false, false, false], /* 0xD5 */
-		[false, false, false, false, false, false, false, false], /* 0xD6 */
-		[false, false, false, false, false, false, false, false], /* 0xD7 */
-		[false, false, false, false, false, false, false, false], /* 0xD8 */
-		[false, false, false, false, false, false, false, false], /* 0xD9 */
-		[false, false, false, false, false, false, false, false], /* 0xDA */
-		[false, false, false, false, false, false, false, false], /* 0xDB */
-		[false, false, false, false, false, false, false, false], /* 0xDC */
-		[false, false, false, false, false, false, false, false], /* 0xDD */
-		[false, false, false, false, false, false, false, false], /* 0xDE */
-		[false, false, false, false, false, false, false, false], /* 0xDF */
-
-		[false, false, false, false, false, false, false, false], /* 0xE0 */
-		[false, false, false, false, false, false, false, false], /* 0xE1 */
-		[false, false, false, false, false, false, false, false], /* 0xE2 */
-		[false, false, false, false, false, false, false, false], /* 0xE3 */
-		[false, false, false, false, false, false, false, false], /* 0xE4 */
-		[false, false, false, false, false, false, false, false], /* 0xE5 */
-		[false, false, false, false, false, false, false, false], /* 0xE6 */
-		[false, false, false, false, false, false, false, false], /* 0xE7 */
-		[false, false, false, false, false, false, false, false], /* 0xE8 */
-		[false, false, false, false, false, false, false, false], /* 0xE9 */
-		[false, false, false, false, false, false, false, false], /* 0xEA */
-		[false, false, false, false, false, false, false, false], /* 0xEB */
-		[false, false, false, false, false, false, false, false], /* 0xEC */
-		[false, false, false, false, false, false, false, false], /* 0xED */
-		[false, false, false, false, false, false, false, false], /* 0xEE */
-		[false, false, false, false, false, false, false, false], /* 0xEF */
-
-		[false, false, false, false, false, false, false, false], /* 0xF0 */
-		[false, false, false, false, false, false, false, false], /* 0xF1 */
-		[false, false, false, false, false, false, false, false], /* 0xF2 */
-		[false, false, false, false, false, false, false, false], /* 0xF3 */
-		[false, false, false, false, false, false, false, false], /* 0xF4 */
-		[false, false, false, false, false, false, false, false], /* 0xF5 */
-		[false, false, false, false, false, false, false, false], /* 0xF6 */
-		[false, false, false, false, false, false, false, false], /* 0xF7 */
-		[false, false, false, false, false, false, false, false], /* 0xF8 */
-		[false, false, false, false, false, false, false, false], /* 0xF9 */
-		[false, false, false, false, false, false, false, false], /* 0xFA */
-		[false, false, false, false, false, false, false, false], /* 0xFB */
-		[false, false, false, false, false, false, false, false], /* 0xFC */
-		[false, false, false, false, false, false, false, false], /* 0xFD */
-		[false, false, false, false, false, false, false, false], /* 0xFE */
-		[false, false, false, false, false, false, false, false] /*  0xFF */
-	],
 	/**
 	 * ADC – Add with Carry
 	 * 
@@ -385,13 +340,14 @@ var avr = {
 	 */
 	adc: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
-
+		var SREG = this.dataspace[SREG];
+		
 		/* Operation: Rd <- Rd + Rr + C */
-		C[0] = this.sreg[0];
+		C[0] = SREG[0];
 
 		R[0] = !!(Rd[0] ^ Rr[0]);
 		C[1] = Rd[0] && Rr[0];
@@ -417,22 +373,22 @@ var avr = {
 		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
 
 		/* C: Set if there was carry from the MSB of the result; cleared otherwise. */
-		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] && Rd[7];
+		this.dataspace[SREG][0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] && Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		SREG[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = R[7];
+		SREG[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
-		this.sreg[3] = Rd[7] && Rr[7] && !Rr[7] || !Rd[7] && !Rr[7] && R[7];
+		SREG[3] = Rd[7] && Rr[7] && !Rr[7] || !Rd[7] && !Rr[7] && R[7];
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* H: Set if there was a carry from bit 3; cleared otherwise. */
-		this.sreg[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
+		SREG[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = R;
+		this.dataspace[_Rd] = R;
 	},
 	/**
 	 * ADD – Add without Carry
@@ -444,10 +400,11 @@ var avr = {
 	 */
 	add: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd + Rr */
 		C[0] = false;
@@ -476,22 +433,22 @@ var avr = {
 		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
 
 		/* C: Set if there was carry from the MSB of the result; cleared otherwise. */
-		this.sreg[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] && Rd[7];
+		SREG[0] = Rd[7] && Rr[7] || Rr[7] && !R[7] || !R[7] && Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		SREG[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = R[7];
+		SREG[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
-		this.sreg[3] = Rd[7] && Rr[7] && !Rr[7] || !Rd[7] && !Rr[7] && R[7];
+		SREG[3] = Rd[7] && Rr[7] && !Rr[7] || !Rd[7] && !Rr[7] && R[7];
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* H: Set if there was a carry from bit 3; cleared otherwise. */
-		this.sreg[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
+		SREG[5] = Rd[3] && Rr[3] || Rr[3] && !R[3] || !R[3] && Rd[3];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = R;
+		this.dataspace[_Rd] = R;
 	},
 	/**
 	 * ADIW – Add Immediate to Word
@@ -507,8 +464,9 @@ var avr = {
 	 */
 	adiw: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -524,8 +482,10 @@ var avr = {
 	 */
 	and: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
+		var SREG = this.dataspace[this.sreg];
+		
 		/* Operation: Rd <- Rd && Rr */
 		Rd[0] = Rd[0] && Rr[0];
 		Rd[1] = Rd[1] && Rr[1];
@@ -537,18 +497,18 @@ var avr = {
 		Rd[7] = Rd[7] && Rr[7];
 
 		/* @TODO */
-		this.sreg[4];
+		SREG[4];
 		/* Cleared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * ANDI – Logical AND with Immediate
@@ -561,7 +521,8 @@ var avr = {
 	 */
 	andi: function(_Rd, K) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd && K */
 		Rd[0] = Rd[0] && K[0];
@@ -574,18 +535,18 @@ var avr = {
 		Rd[7] = Rd[7] && K[7];
 
 		/* @TODO */
-		this.sreg[4];
+		SREG[4];
 		/* Cleared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * ASR – Arithmetic Shift Right
@@ -598,9 +559,12 @@ var avr = {
 	 * @param _Rd    0 <= d <= 31
 	 */
 	asr: function(_Rd) {
+		
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* C: Set if, before the shift, the LSB of RD was set; cleared otherwise. */
-		this.sreg[0] = Rd[0];
+		SREG[0] = Rd[0];
 
 		/* Operation */
 		Rd[0] = Rd[1];
@@ -613,21 +577,21 @@ var avr = {
 		Rd[7] = Rd[7];
 
 		/* Z: Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* N: Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 
 		/* V: N ^ C (For N and C after the shift) */
-		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
+		SREG[3] = !!(SREG[2] ^ SREG[0]);
 
 		/* S: N ^ V, For signed test */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/** 
 	 * BCLR – Bit Clear in SREG
@@ -639,7 +603,7 @@ var avr = {
 	bclr: function(s) {
 
 		/* @TODO */
-		this.sreg[s] = false;
+		this.dataspace[this.sreg][s] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -655,7 +619,7 @@ var avr = {
 	bld: function(_Rd, b) {
 
 		/* Operation: Rd(b) <- T */
-		this.reg[_Rd] = this.sreg[6];
+		this.dataspace[_Rd] = this.dataspace[this.sreg][6];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -674,7 +638,7 @@ var avr = {
 	brbc: function(s, k) {
 
 		/* Operation: If SREG(s) = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[s] === false) {
+		if (this.dataspace[this.sreg][s] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -695,7 +659,7 @@ var avr = {
 	brbs: function(s, k) {
 
 		/* Operation: If SREG(s) = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[s] === true) {
+		if (this.dataspace[this.sreg][s] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -716,7 +680,7 @@ var avr = {
 	brcc: function(k) {
 
 		/* Operation: If C = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[0] === false) {
+		if (this.dataspace[this.sreg][0] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -737,7 +701,7 @@ var avr = {
 	brcs: function(k) {
 
 		/* Operation: If C = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[0] === true) {
+		if (this.dataspace[this.sreg][0] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -776,7 +740,7 @@ var avr = {
 	breq: function(k) {
 
 		/* Operation: If Rd = Rr (Z = 1) then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[1] === true) {
+		if (this.dataspace[this.sreg][1] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -800,7 +764,7 @@ var avr = {
 	brge: function(k) {
 
 		/* Operation: If Rd ≥ Rr (N ⊕ V = 0) then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[4] === false) {
+		if (this.dataspace[this.sreg][4] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -821,7 +785,7 @@ var avr = {
 	brhc: function(k) {
 
 		/* Operation: If H = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[5] === false) {
+		if (this.dataspace[this.sreg][5] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -842,7 +806,7 @@ var avr = {
 	brhs: function(k) {
 
 		/* Operation: If H = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[5] === true) {
+		if (this.dataspace[this.sreg][5] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -863,7 +827,7 @@ var avr = {
 	brid: function(k) {
 
 		/* If I = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[7] === false) {
+		if (this.dataspace[this.sreg][7] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -884,7 +848,7 @@ var avr = {
 	brie: function(k) {
 
 		/* If I = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[7] === true) {
+		if (this.dataspace[this.sreg][7] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -908,7 +872,7 @@ var avr = {
 	brlo: function(k) {
 
 		/* Operation: If Rd < Rr (C = 1) then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[0] === true) {
+		if (this.dataspace[this.sreg][0] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -932,7 +896,7 @@ var avr = {
 	brlt: function(k) {
 
 		/* Operation: If Rd < Rr (N ⊕ V = 1) then PC ← PC + k + 1, else PC ← PC + 1 */
-		if (this.sreg[4] === true) {
+		if (this.dataspace[this.sreg][4] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -953,7 +917,7 @@ var avr = {
 	brmi: function(k) {
 
 		/* If N = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[2] === true) {
+		if (this.dataspace[this.sreg][2] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -977,7 +941,7 @@ var avr = {
 	brne: function(k) {
 
 		/* If Rd != Rr (Z = 0) then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[1] === false) {
+		if (this.dataspace[this.sreg][1] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -998,7 +962,7 @@ var avr = {
 	brpl: function(k) {
 
 		/* Operation: If N = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[2] === false) {
+		if (this.dataspace[this.sreg][2] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -1022,7 +986,7 @@ var avr = {
 	brsh: function(k) {
 
 		/* Operation: If Rd >= Rr (C = 0) then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[0] === false) {
+		if (this.dataspace[this.sreg][0] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -1043,7 +1007,7 @@ var avr = {
 	brtc: function(k) {
 
 		/* Operation: If T = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[6] === false) {
+		if (this.dataspace[this.sreg][6] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -1064,7 +1028,7 @@ var avr = {
 	brts: function(k) {
 
 		/* Operation: If T = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[6] === true) {
+		if (this.dataspace[this.sreg][6] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -1085,7 +1049,7 @@ var avr = {
 	brvc: function(k) {
 
 		/* Operation: If V = 0 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[3] === false) {
+		if (this.dataspace[this.sreg][3] === false) {
 			this.PC = this.PC + k;
 		}
 
@@ -1106,7 +1070,7 @@ var avr = {
 	brvs: function(k) {
 
 		/** Operation: If V = 1 then PC <- PC + k + 1, else PC <- PC + 1 */
-		if (this.sreg[3] === true) {
+		if (this.dataspace[this.sreg][3] === true) {
 			this.PC = this.PC + k;
 		}
 
@@ -1122,7 +1086,7 @@ var avr = {
 	 */
 	bset: function(s) {
 
-		this.sreg[s] = true;
+		this.dataspace[this.sreg][s] = true;
 		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
@@ -1138,7 +1102,7 @@ var avr = {
 	 */
 	bst: function(_Rd, b) {
 
-		this.sreg[6] = _Rd[b];
+		this.dataspace[this.sreg][6] = _Rd[b];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1192,7 +1156,8 @@ var avr = {
 	 */
 	cbr: function(_Rd, K) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd && ($FF - K) */
 		Rd[0] = Rd[0] && !K[0];
@@ -1205,18 +1170,18 @@ var avr = {
 		Rd[7] = Rd[7] && !K[7];
 
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
 		/* N: Set if MSB of the result is set; celared otherwise */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* V: Celared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * CLC – Clear Carry Flag
@@ -1226,7 +1191,7 @@ var avr = {
 	clc: function() {
 
 		/* Carry Flag cleared */
-		this.sreg[0] = false;
+		this.dataspace[this.sreg][0] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1239,7 +1204,7 @@ var avr = {
 	clh: function() {
 
 		/* Half Carry Flag cleared */
-		this.sreg[5] = false;
+		this.dataspace[this.sreg][5] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1255,7 +1220,7 @@ var avr = {
 	cli: function() {
 
 		/* Global Interrupt Flag cleared */
-		this.sreg[7] = false;
+		this.dataspace[this.sreg][7] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1268,7 +1233,7 @@ var avr = {
 	cln: function() {
 
 		/* Negative Flag cleared */
-		this.sreg[2] = false;
+		this.dataspace[this.sreg][2] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1284,8 +1249,9 @@ var avr = {
 	 */
 	clr: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
-
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
+		
 		/* Operation: Rd <- Rd != Rd */
 		Rd[0] = Rd[0] !== Rd[0];
 		Rd[1] = Rd[1] !== Rd[1];
@@ -1296,15 +1262,15 @@ var avr = {
 		Rd[6] = Rd[6] !== Rd[6];
 		Rd[7] = Rd[7] !== Rd[7];
 
-		this.sreg[4] = false;
-		this.sreg[3] = false;
-		this.sreg[2] = false;
-		this.sreg[1] = true;
+		SREG[4] = false;
+		SREG[3] = false;
+		SREG[2] = false;
+		SREG[1] = true;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * CLS – Clear Signed Flag
@@ -1314,7 +1280,7 @@ var avr = {
 	cls: function() {
 
 		/* Signed Flag cleared */
-		this.sreg[4] = false;
+		this.dataspace[this.sreg][4] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1327,7 +1293,7 @@ var avr = {
 	clt: function() {
 
 		/* T Flag cleared */
-		this.sreg[6] = false;
+		this.dataspace[this.sreg][6] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1340,7 +1306,7 @@ var avr = {
 	clv: function() {
 
 		/* Overflow Flag cleared */
-		this.sreg[3] = false;
+		this.dataspace[this.sreg][3] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1353,7 +1319,7 @@ var avr = {
 	clz: function() {
 
 		/* Zero Flag cleared */
-		this.sreg[1] = false;
+		this.dataspace[this.sreg][1] = false;
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1367,7 +1333,8 @@ var avr = {
 	 */
 	com: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation Rd <- $FF - Rd */
 		Rd[0] = !Rd[0];
@@ -1380,20 +1347,20 @@ var avr = {
 		Rd[7] = !Rd[7];
 
 		/* C: Set */
-		this.sreg[0] = true;
+		SREG[0] = true;
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && Rd[0];
 		/* N: Set if MSB of the result is set; celared otherwise */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* V: Celared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * CP - Compare
@@ -1406,26 +1373,27 @@ var avr = {
 	 */
 	cp: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
 		var R = [false, false, false, false, false, false, false, false];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd - Rr */
 
 		/* @TODO */
 
 		/* C: Set if the absolute value of the contents of Rr is larger than the absolute value of Rd; cleared otherwise. */
-		this.sreg[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
+		SREG[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		SREG[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise */
-		this.sreg[2] = R[7];
+		SREG[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
-		this.sreg[3] = Rd[7] && !Rr[7] && !R[7] || !Rd[7] && Rr[7] && R[7];
+		SREG[3] = Rd[7] && !Rr[7] && !R[7] || !Rd[7] && Rr[7] && R[7];
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* H: Set if there was a borrow from bit 3; cleared otherwise */
-		this.sreg[5] = !Rd[3] && Rr[3] || Rr[3] && R[3] || R[3] && !Rd[3];
+		SREG[5] = !Rd[3] && Rr[3] || Rr[3] && R[3] || R[3] && !Rd[3];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1442,9 +1410,10 @@ var avr = {
 	 */
 	cpc: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
 		var R = [false, false, false, false, false, false, false, false];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd - Rr - C */
 
@@ -1452,17 +1421,17 @@ var avr = {
 		/* @TODO */
 
 		/* C: Set if the absolute value of the contents of Rr is larger than the absolute value of Rd; cleared otherwise. */
-		this.sreg[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
+		SREG[0] = !Rd[7] && Rr[7] || Rr[7] && R[7] || R[7] && !Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		SREG[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise */
-		this.sreg[2] = R[7];
+		SREG[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
-		this.sreg[3] = Rd[7] && !Rr[7] && !R[7] || !Rd[7] && Rr[7] && R[7];
+		SREG[3] = Rd[7] && !Rr[7] && !R[7] || !Rd[7] && Rr[7] && R[7];
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* H: Set if there was a borrow from bit 3; cleared otherwise */
-		this.sreg[5] = !Rd[3] && Rr[3] || Rr[3] && R[3] || R[3] && !Rd[3];
+		SREG[5] = !Rd[3] && Rr[3] || Rr[3] && R[3] || R[3] && !Rd[3];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1479,24 +1448,25 @@ var avr = {
 	 */
 	cpi: function(_Rd, K) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd - K */
 
 		/* @TODO */
 
 		/* C: Set if the absolute value of K is larger than the absolute value of Rd; cleared otherwise. */
-		this.sreg[0] = !Rd[7] && K[7] || K[7] && R[7] || R[7] && !Rd[7];
+		SREG[0] = !Rd[7] && K[7] || K[7] && R[7] || R[7] && !Rd[7];
 		/* Z: Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		SREG[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise */
-		this.sreg[2] = R[7];
+		SREG[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
-		this.sreg[3] = Rd[7] && !K[7] && !R[7] || !Rd[7] && K[7] && R[7];
+		SREG[3] = Rd[7] && !K[7] && !R[7] || !Rd[7] && K[7] && R[7];
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* H: Set if there was a borrow from bit 3; cleared otherwise */
-		this.sreg[5] = !Rd[3] && K[3] || K[3] && R[3] || R[3] && !Rd[3];
+		SREG[5] = !Rd[3] && K[3] || K[3] && R[3] || R[3] && !Rd[3];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -1512,8 +1482,9 @@ var avr = {
 	 */
 	cpse: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation if Rd = Rr then PC <- PC + 2 (or 3) else PC <- PC + 1 */
 		if (
@@ -1613,8 +1584,9 @@ var avr = {
 	 */
 	eor: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd != Rr */
 		Rd[0] = Rd[0] !== Rr[0];
@@ -1627,18 +1599,18 @@ var avr = {
 		Rd[7] = Rd[7] !== Rr[7];
 
 		/* @TODO */
-		this.sreg[4];
+		SREG[4];
 		/* Cleared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * FMUL – Fractional Multiply Unsigned
@@ -1690,7 +1662,7 @@ var avr = {
 	 */
 	in: function(_Rd, A) {
 
-		var Rd = this.reg[Rd];
+		var Rd = this.dataspace[Rd];
 		var A = this.io[A];
 
 		/* Operation: Rd <- I/O(A) */
@@ -1706,7 +1678,7 @@ var avr = {
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * INC – Increment
@@ -1721,9 +1693,10 @@ var avr = {
 	 */
 	inc: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd + Rr */
 		C[0] = false;
@@ -1752,18 +1725,18 @@ var avr = {
 		R[7] = !!(Rd[7] ^ C[7]);
 
 		/* Z: Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
+		SREG[1] = !R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && R[0];
 		/* N: Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = R[7];
+		SREG[2] = R[7];
 		/* V: Set if two’s complement overflow resulted from the operation; cleared otherwise. */
-		this.sreg[3] = R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && !R[0];
+		SREG[3] = R[7] && !R[6] && !R[5] && !R[4] && !R[3] && !R[2] && !R[1] && !R[0];
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = R;
+		this.dataspace[_Rd] = R;
 	},
 	/**
 	 * JMP – Jump
@@ -1842,7 +1815,7 @@ var avr = {
 	 */
 	ldi: function(_Rd, K) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
 
 		/* Operation Rd <- K */
 		Rd[0] = K[0];
@@ -1857,7 +1830,7 @@ var avr = {
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * LDS - Load Direct from Data Space
@@ -1882,7 +1855,7 @@ var avr = {
 	 */
 	lds: function(_Rd, k) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
 
 		/* @TODO */
 
@@ -1899,7 +1872,7 @@ var avr = {
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * LPM - Load Program Memory 
@@ -1924,10 +1897,11 @@ var avr = {
 	 */
 	lsl: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
-		this.sreg[0] = Rd[7];
+		SREG[0] = Rd[7];
 
 		/* Operation */
 		Rd[7] = Rd[6];
@@ -1940,20 +1914,20 @@ var avr = {
 		Rd[0] = false;
 
 		/* @TODO */
-		this.sreg[5] = Rd[3];
+		SREG[5] = Rd[3];
 		/* For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* For N and C after the shift. */
-		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
+		SREG[3] = !!(SREG[2] ^ SREG[0]);
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * Logical Shift Right
@@ -1968,10 +1942,11 @@ var avr = {
 	 */
 	lsr: function(_Rd) {
 
-		Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Set if, before the shift, the LSB of Rd was set; cleared otherwise */
-		this.sreg[0] = Rd[0];
+		SREG[0] = Rd[0];
 
 		/* Operation */
 		Rd[0] = Rd[1];
@@ -1985,17 +1960,17 @@ var avr = {
 
 		/* @TODO */
 		/* For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* For N and C after the shift. */
-		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
-		this.sreg[2] = false;
+		SREG[3] = !!(SREG[2] ^ SREG[0]);
+		SREG[2] = false;
 		/* Set if the result is $00; cleared otherwise */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * MOV – Copy Registe
@@ -2009,8 +1984,8 @@ var avr = {
 	 */
 	mov: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
 
 		/* Operation: Rd <- Rr */
 		Rd[0] = Rr[0];
@@ -2025,7 +2000,7 @@ var avr = {
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * MOVW – Copy Register Word
@@ -2039,10 +2014,10 @@ var avr = {
 	 */
 	movw: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rd1 = this.reg[_Rd + 1];
-		var Rr = this.reg[_Rr];
-		var Rr1 = this.reg[_Rr + 1];
+		var Rd = this.dataspace[_Rd];
+		var Rd1 = this.dataspace[_Rd + 1];
+		var Rr = this.dataspace[_Rr];
+		var Rr1 = this.dataspace[_Rr + 1];
 
 		/* Operation: Rd+1:Rd <- Rr+1:Rr */
 		/* @TODO */
@@ -2098,8 +2073,9 @@ var avr = {
 	 */
 	or: function(_Rd, _Rr) {
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd || Rr */
 		Rd[0] = Rd[0] || Rr[0];
@@ -2112,18 +2088,18 @@ var avr = {
 		Rd[7] = Rd[7] || Rr[7];
 
 		/* @TODO */
-		this.sreg[4];
+		SREG[4];
 		/* Cleared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * ORI – Logical OR with Immediate
@@ -2136,7 +2112,8 @@ var avr = {
 	 */
 	ori: function(_Rd, K) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd v K */
 		Rd[0] = Rd[0] || K[0];
@@ -2149,18 +2126,18 @@ var avr = {
 		Rd[7] = Rd[7] || K[7];
 
 		/* @TODO */
-		this.sreg[4];
+		SREG[4];
 		/* Cleared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * OUT – Store Register to I/O Location
@@ -2185,10 +2162,7 @@ var avr = {
 	 */
 	pop: function(_Rd) {
 
-		this.SP++;
-
-		/* Rd <- STACK */
-		this.reg[_Rd] = this.stack[this.SP];
+		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -2203,10 +2177,7 @@ var avr = {
 	 */
 	push: function(_Rr) {
 
-		/* STACK <- Rr */
-		this.stack[this.SP] = this.reg[_Rr];
-
-		this.SP--;
+		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
@@ -2260,12 +2231,13 @@ var avr = {
 	 */
 	rol: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Rd3 */
-		this.sreg[5] = Rd[3];
+		SREG[5] = Rd[3];
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
-		this.sreg[0] = Rd[7];
+		SREG[0] = Rd[7];
 
 		/* Operation: C <- b7 <- ... <- b0 <- C */
 		Rd[7] = Rd[6];
@@ -2275,22 +2247,22 @@ var avr = {
 		Rd[3] = Rd[2];
 		Rd[2] = Rd[1];
 		Rd[1] = Rd[0];
-		Rd[0] = this.sreg[0];
+		Rd[0] = SREG[0];
 
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* N ^ C (For N and C after the shift) */
-		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
+		SREG[3] = !!(SREG[2] ^ SREG[0]);
 		/* N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+		SREG[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
 
 		/* Save changes */
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * ROR – Rotate Right through Carry
@@ -2306,12 +2278,13 @@ var avr = {
 	 */
 	ror: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Rd3 */
-		this.sreg[5] = Rd[3];
+		SREG[5] = Rd[3];
 		/* Set if, before the shift, the MSB of Rd was set; cleared otherwise. */
-		this.sreg[0] = Rd[0];
+		SREG[0] = Rd[0];
 
 		Rd[0] = Rd[1];
 		Rd[1] = Rd[2];
@@ -2320,22 +2293,22 @@ var avr = {
 		Rd[4] = Rd[5];
 		Rd[5] = Rd[6];
 		Rd[6] = Rd[7];
-		Rd[7] = this.sreg[0];
+		Rd[7] = SREG[0];
 
 		/* Set if MSB of the result is set; cleared otherwise. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* N ^ C (For N and C after the shift) */
-		this.sreg[3] = !!(this.sreg[2] ^ this.sreg[0]);
+		SREG[3] = !!(SREG[2] ^ SREG[0]);
 		/* N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 		/* Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+		SREG[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
 
 		/* Save changes */
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * SBC – Subtract with Carry
@@ -2460,7 +2433,7 @@ var avr = {
 	 */
 	sbr: function(_Rd, K) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
 
 		/* Operation: Rd <- Rd v K */
 		Rd[0] = Rd[0] || K[0];
@@ -2473,18 +2446,18 @@ var avr = {
 		Rd[7] = Rd[7] || K[7];
 
 		/* Z: Set if the result is $00; cleared othervise. */
-		this.reg[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		this.dataspace[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 		/* N: Set if MSB of the result is set; cleared othervise. */
-		this.reg[2] = Rd[7];
+		this.dataspace[2] = Rd[7];
 		/* V: Cleared */
-		this.reg[3] = false;
+		this.dataspace[3] = false;
 		/* S: N ^ V, For signed tests. */
-		this.reg[4] = !!(this.reg[2] ^ this.reg[3]);
+		this.dataspace[4] = !!(this.dataspace[2] ^ this.dataspace[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * SBRC – Skip if Bit in Register is Cleared
@@ -2497,7 +2470,7 @@ var avr = {
 	sbrc: function(_Rr, b) {
 
 		/* Operation: If Rr(b) = 0 then PC <- PC + 2 (or 3) else PC <- PC + 1 */
-		if (this.reg[_Rr][b] === false) {
+		if (this.dataspace[_Rr][b] === false) {
 			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
 			this.PC += 2;
 		} else {
@@ -2516,7 +2489,7 @@ var avr = {
 	sbrs: function(_Rr, b) {
 
 		/* Operation: If Rr(b) = 1 then PC <- PC + 2 (or 3) else PC <- PC + 1 */
-		if (this.reg[_Rr][b] === true) {
+		if (this.dataspace[_Rr][b] === true) {
 			/* Program Counter: PC <- PC + 2, Skip a one word instruction */
 			this.PC += 2;
 		} else {
@@ -2532,7 +2505,7 @@ var avr = {
 	sec: function() {
 
 		/* Operation: C <- 1 */
-		this.sreg[0] = true;
+		this.dataspace[this.sreg][0] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2545,7 +2518,7 @@ var avr = {
 	seh: function() {
 
 		/* Operation: H <- 1 */
-		this.sreg[5] = true;
+		this.dataspace[this.sreg][5] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2559,7 +2532,7 @@ var avr = {
 	sei: function() {
 
 		/* Operation: I <- 1 */
-		this.sreg[7] = true;
+		this.dataspace[this.sreg][7] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2572,7 +2545,7 @@ var avr = {
 	sen: function() {
 
 		/* Operation: N <- 1 */
-		this.sreg[2] = true;
+		this.dataspace[this.sreg][2] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2586,7 +2559,7 @@ var avr = {
 	 */
 	ser: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
 
 		/* Operation: Rd <- $FF */
 		Rd[0] = true;
@@ -2601,7 +2574,7 @@ var avr = {
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * SES – Set Signed Flag
@@ -2611,7 +2584,7 @@ var avr = {
 	ses: function() {
 
 		/* Operation: S <- 1 */
-		this.sreg[4] = true;
+		SREG[4] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2624,7 +2597,7 @@ var avr = {
 	set: function() {
 
 		/* Operation: T <- 1 */
-		this.sreg[6] = true;
+		SREG[6] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2637,7 +2610,7 @@ var avr = {
 	sev: function() {
 
 		/* Operation: V <- 1 */
-		this.sreg[3] = true;
+		SREG[3] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2650,7 +2623,7 @@ var avr = {
 	sez: function() {
 
 		/* Operation: Z <- 1 */
-		this.sreg[1] = true;
+		SREG[1] = true;
 
 		/* Program counter: PC <- PC + 1 */
 		this.PC++;
@@ -2709,7 +2682,7 @@ var avr = {
 	 */
 	sts: function(k, _Rr) {
 
-		this.memory[k] = this.reg[_Rr];
+		this.memory[k] = this.dataspace[_Rr];
 
 		/* @TODO */
 
@@ -2727,10 +2700,11 @@ var avr = {
 	sub: function(_Rd, _Rr) {
 
 
-		var Rd = this.reg[_Rd];
-		var Rr = this.reg[_Rr];
+		var Rd = this.dataspace[_Rd];
+		var Rr = this.dataspace[_Rr];
 		var C = [false, false, false, false, false, false, false, false];
 		var R = [false, false, false, false, false, false, false, false];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation Rd <- Rd + Rr */
 		C[0] = false;
@@ -2759,13 +2733,13 @@ var avr = {
 		R[7] = !!(Rd[7] ^ Rr[7] ^ C[7]);
 
 		/* C: */
-		this.sreg[0] = C[7] && !!(Rd[7] ^ Rr[7]) || (!Rd[7] && Rr[7]);
+		SREG[0] = C[7] && !!(Rd[7] ^ Rr[7]) || (!Rd[7] && Rr[7]);
 		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = R;
+		this.dataspace[_Rd] = R;
 	},
 	/**
 	 * SUBI – Subtract Immediate
@@ -2793,7 +2767,7 @@ var avr = {
 	 */
 	swap: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
 		var R = [false, false, false, false, false, false, false, false];
 
 		/* Operation: R(7:4) <- Rd(3:0), R(3:0) <- Rd(7:4) */
@@ -2810,7 +2784,7 @@ var avr = {
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = R;
+		this.dataspace[_Rd] = R;
 	},
 	/**
 	 * TST - Test for Zero or Minus
@@ -2823,7 +2797,8 @@ var avr = {
 	 */
 	tst: function(_Rd) {
 
-		var Rd = this.reg[_Rd];
+		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.sreg];
 
 		/* Operation: Rd <- Rd && Rd */
 		Rd[0] = Rd[0] && Rd[0];
@@ -2836,18 +2811,18 @@ var avr = {
 		Rd[7] = Rd[7] && Rd[7];
 
 		/* Z: Set if the result is $00; cleared otherwise. */
-		this.sreg[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
+		SREG[1] = !Rd[0] && !Rd[1] && !Rd[2] && !Rd[3] && !Rd[4] && !Rd[5] && !Rd[6] && !Rd[7];
 		/* N: Set if MSB of the result is set; cleared otherwis. */
-		this.sreg[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* V: Cleared */
-		this.sreg[3] = false;
+		SREG[3] = false;
 		/* S: N ^ V, For signed tests. */
-		this.sreg[4] = !!(this.sreg[2] ^ this.sreg[3]);
+		SREG[4] = !!(SREG[2] ^ SREG[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
-		this.reg[_Rd] = Rd;
+		this.dataspace[_Rd] = Rd;
 	},
 	/**
 	 * This instruction resets the Watchdog Timer. 
