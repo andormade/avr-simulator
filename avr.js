@@ -67,7 +67,7 @@ var avr = {
 		/**
 		 * Register Space    0x00 - 0xFF
 		 */
-		
+
 		/*
 		 * General Purpose Register File    0x00 - 0x1f
 		 *      MSB                                              LSB           */
@@ -345,7 +345,7 @@ var avr = {
 		var R = [false, false, false, false, false, false, false, false];
 		var C = [false, false, false, false, false, false, false, false];
 		var SREG = this.dataspace[SREG];
-		
+
 		/* Operation: Rd <- Rd + Rr + C */
 		C[0] = SREG[0];
 
@@ -389,6 +389,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = R;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * ADD – Add without Carry
@@ -449,6 +450,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = R;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * ADIW – Add Immediate to Word
@@ -485,7 +487,7 @@ var avr = {
 		var Rd = this.dataspace[_Rd];
 		var Rr = this.dataspace[_Rr];
 		var SREG = this.dataspace[this.sreg];
-		
+
 		/* Operation: Rd <- Rd && Rr */
 		Rd[0] = Rd[0] && Rr[0];
 		Rd[1] = Rd[1] && Rr[1];
@@ -509,6 +511,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * ANDI – Logical AND with Immediate
@@ -547,6 +550,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * ASR – Arithmetic Shift Right
@@ -559,7 +563,7 @@ var avr = {
 	 * @param _Rd    0 <= d <= 31
 	 */
 	asr: function(_Rd) {
-		
+
 		var Rd = this.dataspace[_Rd];
 		var SREG = this.dataspace[this.sreg];
 
@@ -578,13 +582,10 @@ var avr = {
 
 		/* Z: Set if the result is $00; cleared otherwise. */
 		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
-
 		/* N: Set if MSB of the result is set; cleared otherwise. */
 		SREG[2] = Rd[7];
-
 		/* V: N ^ C (For N and C after the shift) */
 		SREG[3] = !!(SREG[2] ^ SREG[0]);
-
 		/* S: N ^ V, For signed test */
 		SREG[4] = !!(SREG[2] ^ SREG[3]);
 
@@ -592,6 +593,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/** 
 	 * BCLR – Bit Clear in SREG
@@ -1182,6 +1184,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * CLC – Clear Carry Flag
@@ -1251,7 +1254,7 @@ var avr = {
 
 		var Rd = this.dataspace[_Rd];
 		var SREG = this.dataspace[this.sreg];
-		
+
 		/* Operation: Rd <- Rd != Rd */
 		Rd[0] = Rd[0] !== Rd[0];
 		Rd[1] = Rd[1] !== Rd[1];
@@ -1262,6 +1265,7 @@ var avr = {
 		Rd[6] = Rd[6] !== Rd[6];
 		Rd[7] = Rd[7] !== Rd[7];
 
+		/* @TODO */
 		SREG[4] = false;
 		SREG[3] = false;
 		SREG[2] = false;
@@ -1271,6 +1275,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * CLS – Clear Signed Flag
@@ -1361,6 +1366,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * CP - Compare
@@ -1435,6 +1441,8 @@ var avr = {
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
+		
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * CPI - Compare with Immediate
@@ -1470,6 +1478,8 @@ var avr = {
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
+		
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * CPSE - Compare Skip if Equal
@@ -1611,6 +1621,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * FMUL – Fractional Multiply Unsigned
@@ -1737,6 +1748,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = R;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * JMP – Jump
@@ -1928,6 +1940,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * Logical Shift Right
@@ -1971,6 +1984,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * MOV – Copy Registe
@@ -2100,6 +2114,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * ORI – Logical OR with Immediate
@@ -2138,6 +2153,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * OUT – Store Register to I/O Location
@@ -2263,6 +2279,7 @@ var avr = {
 
 		/* Save changes */
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * ROR – Rotate Right through Carry
@@ -2309,6 +2326,7 @@ var avr = {
 
 		/* Save changes */
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * SBC – Subtract with Carry
@@ -2434,6 +2452,7 @@ var avr = {
 	sbr: function(_Rd, K) {
 
 		var Rd = this.dataspace[_Rd];
+		var SREG = this.dataspace[this.ssreg];
 
 		/* Operation: Rd <- Rd v K */
 		Rd[0] = Rd[0] || K[0];
@@ -2446,18 +2465,19 @@ var avr = {
 		Rd[7] = Rd[7] || K[7];
 
 		/* Z: Set if the result is $00; cleared othervise. */
-		this.dataspace[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
+		SREG[1] = !Rd[7] && !Rd[6] && !Rd[5] && !Rd[4] && !Rd[3] && !Rd[2] && !Rd[1] && !Rd[0];
 		/* N: Set if MSB of the result is set; cleared othervise. */
-		this.dataspace[2] = Rd[7];
+		SREG[2] = Rd[7];
 		/* V: Cleared */
-		this.dataspace[3] = false;
+		SREG[3] = false;
 		/* S: N ^ V, For signed tests. */
-		this.dataspace[4] = !!(this.dataspace[2] ^ this.dataspace[3]);
+		SREG[4] = !!(this.dataspace[2] ^ this.dataspace[3]);
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * SBRC – Skip if Bit in Register is Cleared
@@ -2740,6 +2760,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = R;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * SUBI – Subtract Immediate
@@ -2823,6 +2844,7 @@ var avr = {
 		this.PC++;
 
 		this.dataspace[_Rd] = Rd;
+		this.dataspace[this.sreg] = SREG;
 	},
 	/**
 	 * This instruction resets the Watchdog Timer. 
