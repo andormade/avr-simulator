@@ -1441,7 +1441,7 @@ var avr = {
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.dataspace[this.sreg] = SREG;
 	},
 	/**
@@ -1478,7 +1478,7 @@ var avr = {
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
-		
+
 		this.dataspace[this.sreg] = SREG;
 	},
 	/**
