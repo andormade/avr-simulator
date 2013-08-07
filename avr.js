@@ -1709,7 +1709,7 @@ var avr = {
 		var C = [false, false, false, false, false, false, false, false];
 		var SREG = this.dataspace[this.sreg];
 
-		/* Operation: Rd <- Rd + Rr */
+		/* Operation: Rd <- Rd + 1 */
 		C[0] = false;
 
 		R[0] = !Rd[0];
@@ -2178,6 +2178,35 @@ var avr = {
 	 */
 	pop: function(_Rd) {
 
+		var SPL = this.dataspace[this.spl];
+		var SPH = this.dataspace[this.sph];
+		var C = [false, false, false, false, false, false, false, false];
+
+		C[0] = false;
+
+		SPL[0] = !SPL[0];
+		C[1] = SPL[0];
+
+		SPL[1] = !!(SPL[1] ^ C[1]);
+		C[2] = SPL[1] && C[1];
+
+		SPL[2] = !!(SPL[2] ^ C[2]);
+		C[3] = SPL[2] && C[2];
+
+		SPL[3] = !!(SPL[3] ^ C[3]);
+		C[4] = SPL[3] && C[3];
+
+		SPL[4] = !!(SPL[4] ^ C[4]);
+		C[5] = SPL[4] && C[4];
+
+		SPL[5] = !!(SPL[5] ^ C[5]);
+		C[6] = SPL[5] && C[5];
+
+		SPL[6] = !!(SPL[6] ^ C[6]);
+		C[7] = SPL[6] && C[6];
+
+		SPL[7] = !!(SPL[7] ^ C[7]);
+
 		/* @TODO */
 
 		/* Program Counter: PC <- PC + 1 */
@@ -2194,6 +2223,16 @@ var avr = {
 	push: function(_Rr) {
 
 		/* @TODO */
+
+		var Rr = this.dataspace[_Rr];
+		var SPL = this.dataspace[this.spl];
+		var SPH = this.dataspace[this.sph];
+
+
+
+
+
+
 
 		/* Program Counter: PC <- PC + 1 */
 		this.PC++;
