@@ -1,3 +1,3 @@
-avr.js
+avr-simulator
 ============
-avr.js is an AVR MCU simulator written in JavaScript, designed for educational purposes.
+avr-simulator is an AVR MCU simulator written in JavaScript, designed for educational purposes.
